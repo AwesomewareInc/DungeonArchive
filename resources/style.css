@@ -1,0 +1,15 @@
+@font-face {
+    font-family: Airthan-Age;
+    src: url(fonts/Airthan-Age.ttf);
+}
+
+h1 {
+  font-family: "Airthan-Age";
+  font-size: 5vw;
+  font-weight: 400;
+}
+
+body {
+  font-family: serif;
+  background-image: url("./bg.png");
+}
