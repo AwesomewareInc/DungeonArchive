@@ -53,26 +53,9 @@ body {
 }
 
 .hidden {
-  display: block;
-  background: lightgray;
-  border-radius: 3px;
-  padding: 2px;
-  width: 10%;
-  margin-left: 88%;
-  text-align: right;
-}
-.hidden:before {
-  content: "(out of character discussion)";
-  color: black;
-  font-size: 70%;
-}
-
-.hidden:not(:hover) .message {
-   display: none;
-}
-
-.hidden:hover .message {
-  display: block;
+  font-size: 80%;
+  color: red;
+  font-style: italic;
 }
 
 .message .loud {

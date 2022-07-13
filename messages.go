@@ -159,6 +159,8 @@ func StripRegex(message Message, regex_ string) (string) {
 				// this isn't a regex but we might as well stick it here;
 				// if a sentence starts with the author's name or starts with a part of 
 				// the author's name, remove it.
+				// TODO: replace this with a function that measures the similarity of two 
+				// sentences, and remove it based on if it's a 75% match.
 				author_slice := strings.Split(strings.ToLower(author)," ")
 				content_slice := strings.Split(strings.ToLower(content)," ")
 				var content_ string
