@@ -1,0 +1,18 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+	</head>
+	<body>
+		<noscript>
+			<h2>this requires javascript.</h2>
+		</noscript>
+		{{$file := GetQuery 2}}
+		{{$pfile := PrettyString $file}}
+		<center>
+			<h2>Search through {{$pfile}}</h2>
+		</center>
+		Find...<br>
+		<form id='queries'>
+		</form>
+	</body>
+</html>

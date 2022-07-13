@@ -1,23 +1,29 @@
 <html>
 	<head>
+		{{$area := GetQuery 4}}
+		{{if ne $area ""}}
+		<title>{{PrettyString $area}}</title>
+		{{end}}
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		{{$file := GetQuery "file"}}
+		{{$file := GetQuery 2}}
 		{{$filene := StringNoExtension $file}}
-		{{$area := GetQuery "area"}}
+		
 		{{if eq $area ""}}
 			<b>No area specified</b>
 		{{else}}
 		{{$pfile := PrettyString $file}}
 		{{$parea := PrettyString $area}}
-		<h6>{{$pfile}}</h6>
+		<h6><a href='/campaign/{{$file}}'><- {{$pfile}}</a></h6>
 		<h2>{{$parea}}</h2>
+		{{$messages := ListMessages $filene $area}}
+		{{$messagelen := len $messages}}
+		{{if ge $messagelen 1}}
 		<span class='message-listing'>
 			{{$hiddenToggle := false}}
-			{{$messages := ListMessages $filene $area}}
 			{{$combinedDate := 0}}
-
+			
 			{{range $i, $v := $messages }}
 
 			{{/*<!--  yes there really is a case where a...blank message is just...returned...for some reason... -->*/}}
@@ -86,6 +92,9 @@
 				</span>
 			{{end}}
 		</span>
+		{{else}}
+			<h3>No messages found; invalid area?</h3>
+		{{end}}
 		{{end}}
 	</body>
 </html>

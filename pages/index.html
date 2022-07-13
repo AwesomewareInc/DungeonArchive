@@ -8,7 +8,8 @@
 			<h1>{{ConfigValue "Title"}}</h1>
 			<p>{{ConfigValue "Description"}}</p>
 			{{range ListCampaigns}}
-			<a href='/campaign?file={{- .RawName}}'>{{- .Name}}</a><br>
+			{{$filene := StringNoExtension .RawName}}
+			<a href='/campaign/{{$filene}}'>{{- .Name}}</a><br>
 			{{end}}
 		</center>
 	</body>

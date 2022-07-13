@@ -2,12 +2,13 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"text/template" // due to markdown and wanting better code we cannot use html/template lol
 	"embed"
 	"log"
 	"time"
 	"os"
+	"strings"
+	//"fmt"
 
 	// todo: wait fuck we don't need this
 	"github.com/gabriel-vasile/mimetype" 
@@ -17,7 +18,7 @@ import (
 var pages embed.FS
 var tmpl *template.Template
 
-var queryValues url.Values
+var Values []string 	// todo: maybe don't make this global since this could change while the user is doing things if accessed fast enough
 
 func main() {
 	// initialize the template shit
@@ -51,19 +52,7 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the pagename.
-	pagename := r.URL.EscapedPath()
-
-	// Cache the query values for the template page
-	queryValues = r.URL.Query()
-
-	// Then try and get the file name; they could either be trying to access an internal page in the files folder,
-	// or a file anywhere.
-	if(pagename[0] == '/') {
-		pagename = pagename[1:]
-	} 
-	if(pagename == "") {
-		pagename = "index"
-	}
+	pagename := getPagename(r.URL.EscapedPath())
 
 	var internal bool
 	var filename string
@@ -111,6 +100,36 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 // Template friendly function for getting a query
-func GetQuery(value string) (string) {
-	return queryValues.Get(value)
+func GetQuery(value int) (string) {
+	if(len(Values) > value) {
+		return Values[value]
+	}
+	return ""
+}
+
+func getPagename(fullpagename string) (string) {
+	// Split the pagename into sections
+	Values = strings.Split(fullpagename,"/")
+
+	// Then try and get the relevant pagename from that, accounting for many specifics.
+	pagename := Values[1]
+	// If it's blank, set it to the default page.
+	if(pagename == "") {
+		return "index"
+	}
+	// If the first part is resources, then treat the rest of the url normally
+	if(pagename == "resources") {
+		return fullpagename
+	}
+	// If the URL has three parts, then the third part should be an internal page
+	// prefixed with campaign
+	if(len(Values) > 3) {
+		if(Values[3] == "") {
+			return "campaign"
+		} else {
+			return "campaign_"+Values[3]
+		}
+		
+	}
+	return pagename
 }

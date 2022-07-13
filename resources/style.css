@@ -18,6 +18,12 @@ body {
   display: block;
 }
 
+input[type=submit] {
+  font-size: 1.5vw;
+  padding: 1vw 5vw;
+  margin-bottom: 1vw;
+}
+
 .file-listing {
   display: block;
 }

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"strings"
 	"regexp"
+	"sort"
 )
 
 // Regexp strings for matching certain typing behaviors
@@ -82,15 +83,18 @@ func InitCampaigns() {
 		for _, n := range lines {
 			message := Message{}
 			json.Unmarshal([]byte(n),&message)
+			// Some messages have blank area names, even though the json file doesn't have them?
+			// And then the areas end up having no messages anyways so...?
+			// yeah just ignore them lol
+			if(message.Area == "") {
+				continue
+			}
 			// Check the area tag of the new message to see if
 			// the corresponding area exists, and if not create it.
 			var area *Area
 			if(newCampaign.Areas[message.Area] == nil) {
 				area = &Area{}
 				area.Name = message.Area
-				if(message.Area == "") {
-					area.Name = "?"
-				}
 				newCampaign.Areas[message.Area] = area
 			} else {
 				area = newCampaign.Areas[message.Area]
@@ -115,6 +119,31 @@ func ListAreas(value string) ([]string) {
 
 // Function for listing messages in an area.
 func ListMessages(value string, area string) ([]Message) {
+	if(Campaigns[value] == nil) {
+		// No messages is an indication of an error and is handled accordingly.
+		return []Message{} 
+	}
+
+	// Area "all" is a keyword for every area in a campaign.
+	// If we're given it...
+	if(area == "all") {
+		// First, just get every message in the campaign.
+		var messages []Message
+		for _, a := range Campaigns[value].Areas {
+			for _, m := range a.Messages {
+				messages = append(messages, m)
+			}
+		}
+		// But then, we want to sort it by the time posted.
+		sort.Slice(messages, func(a, b int) bool {
+			return DateFormatted(messages[a].Timestamp).Before(DateFormatted(messages[b].Timestamp))
+		})
+		return messages
+	}
+
+	if(Campaigns[value].Areas[area] == nil) {
+		return []Message{}
+	}
 	messages := Campaigns[value].Areas[area].Messages
 	messagelen := len(messages)
 	// We actually want to create a new array for them
