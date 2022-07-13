@@ -6,12 +6,10 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"io/fs"
-	"strconv"
 	"os"
 	"fmt"
 	"strings"
 	"regexp"
-	"time"
 )
 
 // Regexp strings for matching certain typing behaviors
@@ -144,70 +142,21 @@ func GetMessageType(message Message) (string) {
 	return "normal"
 }
 
-// Function for stripping a certain regex from a message
-func StripRegex(message Message, regex_ string) (string) {
-	content := message.Content
-	author := message.Author
-	regex := strings.Split(regex_, " ")
-	for _, v := range regex {
-		switch(v) {
-			case "italics":
-				content = Regexps["italics"].ReplaceAllString(content,"$2")
-			case "bold":
-				content = Regexps["bold"].ReplaceAllString(content,"$2")
-			case "name":
-				// this isn't a regex but we might as well stick it here;
-				// if a sentence starts with the author's name or starts with a part of 
-				// the author's name, remove it.
-				// TODO: replace this with a function that measures the similarity of two 
-				// sentences, and remove it based on if it's a 75% match.
-				author_slice := strings.Split(strings.ToLower(author)," ")
-				content_slice := strings.Split(strings.ToLower(content)," ")
-				var content_ string
-				for i := 0; i < len(author_slice); i+=2 {
-					firstName := author_slice[i]
-					var lastName string
-					if(i < len(author_slice)-1) {
-						lastName = author_slice[i+1]
-					}
-					firstNameLength := len(firstName)
-					lastNameLength := len(lastName)
-					if(content_slice[0] == firstName && content_slice[1] == lastName) {
-						content_ = content[firstNameLength+lastNameLength+2:len(content)]
-						break
-					}
-					if(content_slice[0] == firstName || content_slice[0] == lastName) {
-						content_ = content[firstNameLength+1:len(content)]
-						break
-					}
-				}
-				if(content_ != "") {content = content_}
-		}
+// Function for editing a message marked as an action; it takes the author's name out if it can and 
+// uncapitalizes the first letter
+func ParseActionMessage(message Message) string {
+	content, noSpace := StripName(message)
+	content = HTMLEscape(content)
+	contentSlice := strings.Split(content," ")
+
+	lowercase := strings.ToLower(contentSlice[0])
+	contentNew := lowercase+" "
+	for _, v := range contentSlice[1:] {
+		contentNew += v+" "
 	}
-	return content
-
-}
-
-// Function for formatting the unix timestamp into a time object
-func DateFormatted(date_ string) (time.Time) {
-	date, err := strconv.ParseInt(date_, 10, 64)
-	if(err != nil) {
-		return time.Now() // too bad. templates can't handle errors.
+	if(!noSpace) {
+		contentNew = "­ "+contentNew
 	}
-	unix := time.Unix(date,0)
-	return unix
+	return contentNew
 }
 
-// Function for getting the combined day/month/year from a formatted time; 
-// useful (and hence here in this file) for seperating messages based on what day
-// they were posted
-func CombinedDate(date_ string) (int) {
-	date := DateFormatted(date_)
-	return int(date.Month())+date.Day()+date.Year()
-}
-
-// Return the date as as string.
-func DateString(date_ string) (string) {
-	date := DateFormatted(date_)
-	return fmt.Sprintf("%v",date)
-}

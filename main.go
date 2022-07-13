@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 	"net/url"
-	"html/template"
+	"text/template" // due to markdown and wanting better code we cannot use html/template lol
 	"embed"
 	"log"
 	"time"

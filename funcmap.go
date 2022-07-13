@@ -4,7 +4,7 @@ package main
 // (this will inevitably get pretty big)
 
 import (
-	"html/template"
+	"text/template"
 	"math"
 )
 
@@ -17,9 +17,11 @@ var FuncMap = 	template.FuncMap{
 					"StringNoExtension": StringNoExtension,
 					"ListMessages":	ListMessages,
 					"GetMessageType": GetMessageType,
-					"StripRegex": StripRegex,
 					"CombinedDate": CombinedDate,
 					"DateString": DateString,
+					"ParseMarkdown": ParseMarkdown,
+					"ParseActionMessage": ParseActionMessage,
+					"HTMLEscape": HTMLEscape,
 
 					// "inc" stands for "incredible" because
 					// what the fuck why can't i just do arithmetic in templates
