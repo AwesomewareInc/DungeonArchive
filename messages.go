@@ -152,6 +152,7 @@ func StripRegex(message Message, regex_ string) (string) {
 	for _, v := range regex {
 		switch(v) {
 			case "italics":
+				// todo: maybe make the first letter lower case in this check?
 				content = Regexps["italics"].ReplaceAllString(content,"$2")
 			case "bold":
 				content = Regexps["bold"].ReplaceAllString(content,"$2")
@@ -182,6 +183,7 @@ func StripRegex(message Message, regex_ string) (string) {
 					}
 				}
 				if(content_ != "") {content = content_}
+			// todo: commands/functions to force a certain tense.
 		}
 	}
 	return content

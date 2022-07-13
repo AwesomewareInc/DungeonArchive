@@ -45,6 +45,7 @@
 					{{$hiddenToggle = false}}
 				{{end}}
 				<span class='message'>
+					<!-- todo: just implement markdown lol --->
 					{{$type := GetMessageType $v}}
 					{{if eq $type "action"}}
 						<em>{{$v.Author}} {{StripRegex $v "italics name"}}</em>
