@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+	</head>
+	<body>
+		{{$file := GetQuery "file"}}
+		{{$filene := StringNoExtension $file}}
+		{{$area := GetQuery "area"}}
+		{{$pfile := PrettyString $file}}
+		{{$parea := PrettyString $area}}
+		<h6>{{$pfile}}</h6>
+		<h2>{{$parea}}</h2>
+		<span class='message-listing'>
+			{{$hiddenToggle := false}}
+			{{$messages := ListMessages $filene $area}}
+			{{$combinedDate := 0}}
+
+			{{range $i, $v := $messages }}
+
+			<!-- yes there really is a case where a...blank message is just...returned...for some reason...-->
+			{{if eq $v.Content ""}}
+			{{else}}
+
+			{{$combinedDate2 := CombinedDate $v.Timestamp}}
+			{{$diff := Sub $combinedDate2 $combinedDate}}
+			{{if gt $diff 2}}
+				{{if $hiddenToggle}}
+					</span>
+				{{end}}
+				<center><small>
+					<!--- todo: find something slightly more accurate to display here, 
+						the time isn't accurate since we're account for at least twoi days of no messages --->
+					{{DateString $v.Timestamp}}
+				</small></center>
+				<hr>
+				{{if $hiddenToggle}}
+					<span class='hidden'>
+				{{end}}
+				{{$combinedDate = $combinedDate2}}
+			{{end}}
+
+			{{if eq $v.Fictional "True"}}
+				{{if $hiddenToggle}} 
+					</span>
+					{{$hiddenToggle = false}}
+				{{end}}
+				<span class='message'>
+					{{$type := GetMessageType $v}}
+					{{if eq $type "action"}}
+						<em>{{$v.Author}} {{StripRegex $v "italics name"}}</em>
+					{{else if eq $type "loud"}}
+						<b>{{$v.Author}}:</b> <span class='loud'>{{StripRegex $v "bold"}}</span>
+					{{else if eq $type "narration"}}
+						<em>{{StripRegex $v "italics name"}}</em>
+					{{else}}
+						<b>{{$v.Author}}:</b> {{$v.Content}}
+					{{end}}
+				</span>
+			{{else}}
+				{{if $hiddenToggle}} 
+				{{else}}
+					{{$hiddenToggle = true}}
+					<span class='hidden'>
+				{{end}}
+				<span class='message'>
+					<b>{{$v.Author}}:</b> {{$v.Content}}
+				</span>
+			{{end}}
+			{{end}}
+			{{end}}
+		</span>
+	</body>
+</html>

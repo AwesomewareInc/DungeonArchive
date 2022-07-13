@@ -13,6 +13,15 @@ type CampaignInfo struct {
 	RawName string
 } 
 
+type Campaign struct {
+	Name 		string
+	Areas  		map[string]*Area
+	Valid 		bool
+	Error 		string
+}
+
+var Campaigns map[string]*Campaign
+
 func ListCampaigns() ([]CampaignInfo) {
 	// First, get all the json files in the resources directory.
 	var campaigns_raw []string
@@ -35,22 +44,32 @@ func ListCampaigns() ([]CampaignInfo) {
 	// Then go through all the names we just and pretty them up
 	var campaigns []CampaignInfo
 	for _, v := range campaigns_raw {
-		// remove the file extension
-		name := v[:len(v)-5]
-		// remove underscores and dashes
-		name = strings.Replace(name, "_"," ",9)
-		name = strings.Replace(name, "-"," ",9)
-		// capitalize the first letter of every word
-		namesplit := strings.Split(name," ")
-		var namefinal string
-		for _, v := range namesplit {
-			namefinal += strings.ToUpper(v[:1])
-			namefinal += v[1:]+" "
-		}
 		campaigns = append(campaigns, CampaignInfo{
-			Name: namefinal,
+			Name: PrettyString(v),
 			RawName: v,
 		})
 	}
 	return campaigns
+}
+
+// Function for getting a extensionless version of a file name
+func StringNoExtension(value string) (string) {
+	return strings.Split(value,".")[0]
+}
+
+// Function for getting a pretty version of snake case formatted string
+func PrettyString(value string) (string) {
+	// remove the file extension, if any.
+	name := StringNoExtension(value)
+	// remove underscores and dashes
+	name = strings.Replace(name, "_"," ",9)
+	name = strings.Replace(name, "-"," ",9)
+	// capitalize the first letter of every word
+	namesplit := strings.Split(name," ")
+	var namefinal string
+	for _, v := range namesplit {
+		namefinal += strings.ToUpper(v[:1])
+		namefinal += v[1:]+" "
+	}
+	return namefinal
 }

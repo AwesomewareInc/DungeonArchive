@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+	</head>
+	<body>
+		{{$file := GetQuery "file"}}
+		{{$filene := StringNoExtension $file}}
+		{{$pfile := PrettyString $file}}
+		<h2>{{$pfile}}</h2>
+		<input type='text' placeholder='Search...'>
+		<span class='file-listing'>
+			{{range $i, $v := ListAreas $filene}}
+			<span class='file'>
+				<a href='/campaign_messages?file={{$file}}&area={{$v}}'>{{PrettyString $v}}</a>
+			</span>
+			{{end}}
+		</span>
+	</body>
+</html>

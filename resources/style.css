@@ -12,4 +12,71 @@ h1 {
 body {
   font-family: serif;
   background-image: url("./bg.png");
+  font-size: 1.5vw;
+  overflow-x: hidden;
+  width: 100%;
+  display: block;
+}
+
+.file-listing {
+  display: block;
+}
+
+.file-listing .file {
+  width: 15vw;
+  height: 15vw;
+  text-align: center;
+  display: inline-block;
+  margin: 5px 0;
+  overflow: hidden;
+}
+.file-listing .file a {
+  color: black;
+  text-decoration: none;
+  font-family: Verdana, sans-serif;
+}
+
+.file-listing .file a:before {
+  content: "";
+  width: 10vw;
+  height: 10vw;
+  display:  block;
+  background: url("./icons/file.png");
+  margin: 0 auto;
+  background-size: 100%;
+}
+
+.message {
+  display: block;
+  margin: 5px;
+  position: relative;
+}
+
+.hidden {
+  display: block;
+  background: lightgray;
+  border-radius: 3px;
+  padding: 2px;
+  width: 10%;
+  margin-left: 88%;
+  text-align: right;
+}
+.hidden:before {
+  content: "(out of character discussion)";
+  color: black;
+  font-size: 70%;
+}
+
+.hidden:not(:hover) .message {
+   display: none;
+}
+
+.hidden:hover .message {
+  display: block;
+}
+
+.message .loud {
+  font-family: sans-serif!important;
+  font-weight: 900!important;
+  text-shadow: 1px 0px black;
 }

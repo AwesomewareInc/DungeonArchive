@@ -2,26 +2,27 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 	"html/template"
 	"embed"
 	"log"
 	"time"
 	"os"
 
-	"github.com/gabriel-vasile/mimetype"
+	// todo: wait fuck we don't need this
+	"github.com/gabriel-vasile/mimetype" 
 )
 
-//go:embed pages/*
+//go:embed pages/*.*
 var pages embed.FS
 var tmpl *template.Template
+
+var queryValues url.Values
 
 func main() {
 	// initialize the template shit
 	tmpl = template.New("")
-	tmpl.Funcs(template.FuncMap{
-		"ConfigValue": ConfigValue,
-		"ListCampaigns": ListCampaigns,
-	})
+	tmpl.Funcs(FuncMap)
 	_, err := tmpl.ParseFS(pages, "pages/*")
 	if err != nil {
 		log.Println(err)
@@ -52,9 +53,15 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	// Get the pagename.
 	pagename := r.URL.EscapedPath()
 
+	// Cache the query values for the template page
+	queryValues = r.URL.Query()
+
 	// Then try and get the file name; they could either be trying to access an internal page in the files folder,
-	// or a file anywhere. 
-	if(pagename == "/") {
+	// or a file anywhere.
+	if(pagename[0] == '/') {
+		pagename = pagename[1:]
+	} 
+	if(pagename == "") {
 		pagename = "index"
 	}
 
@@ -67,8 +74,8 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 		internal = true
 	// Otherwise, check if it could refer to a regular file.
 	} else {
-		if _, err := os.Open("."+pagename); err == nil {
-			filename = "."+pagename
+		if _, err := os.Open("./"+pagename); err == nil {
+			filename = "./"+pagename
 		} else {
 			// If all else fails, send a 404.
 			http.Error(w, err.Error(), 404) 
@@ -101,4 +108,9 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write(page)
 	}
+}
+
+// Template friendly function for getting a query
+func GetQuery(value string) (string) {
+	return queryValues.Get(value)
 }
