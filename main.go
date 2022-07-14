@@ -8,6 +8,7 @@ import (
 	"time"
 	"os"
 	"strings"
+	"net/url"
 	//"fmt"
 
 	// todo: wait fuck we don't need this
@@ -52,7 +53,7 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the pagename.
-	pagename := getPagename(r.URL.EscapedPath())
+	pagename, values := getPagename(r.URL.EscapedPath())
 
 	var internal bool
 	var filename string
@@ -84,9 +85,16 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Header().Set("Content-Name", filename)
 
+	var Info struct {
+		Values 	[]string
+		Query 	url.Values
+	}
+	Info.Values = values
+	Info.Query = r.URL.Query()
+
 	// Serve the file differently based on whether it's an internal page or not.
 	if(internal) {
-		if err := tmpl.ExecuteTemplate(w, pagename+".html", nil); err != nil {
+		if err := tmpl.ExecuteTemplate(w, pagename+".html", Info); err != nil {
 			http.Error(w, err.Error(), 500) 
 		}
 	} else {
@@ -99,37 +107,29 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Template friendly function for getting a query
-func GetQuery(value int) (string) {
-	if(len(Values) > value) {
-		return Values[value]
-	}
-	return ""
-}
-
-func getPagename(fullpagename string) (string) {
+func getPagename(fullpagename string) (string, []string) {
 	// Split the pagename into sections
-	Values = strings.Split(fullpagename,"/")
+	values := strings.Split(fullpagename,"/")
 
 	// Then try and get the relevant pagename from that, accounting for many specifics.
-	pagename := Values[1]
+	pagename := values[1]
 	// If it's blank, set it to the default page.
 	if(pagename == "") {
-		return "index"
+		return "index", values
 	}
 	// If the first part is resources, then treat the rest of the url normally
 	if(pagename == "resources") {
-		return fullpagename
+		return fullpagename, values
 	}
 	// If the URL has three parts, then the third part should be an internal page
 	// prefixed with campaign
-	if(len(Values) > 3) {
-		if(Values[3] == "") {
-			return "campaign"
+	if(len(values) > 3) {
+		if(values[3] == "") {
+			return "campaign", values
 		} else {
-			return "campaign_"+Values[3]
+			return "campaign_"+values[3], values
 		}
 		
 	}
-	return pagename
+	return pagename, values
 }

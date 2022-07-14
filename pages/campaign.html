@@ -3,7 +3,7 @@
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		{{$file := GetQuery 2}}
+		{{$file := index .Values 2}}
 		{{if eq $file ""}}
 		<h2>No campaign specified</h2>
 		{{else}}

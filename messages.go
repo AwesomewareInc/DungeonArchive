@@ -189,3 +189,7 @@ func ParseActionMessage(message Message) string {
 	return contentNew
 }
 
+// Function for searching through a campaign's messages for character interactions
+func SearchMessages(campaign, area string, query []string) ([]Message) {
+	return []Message{}
+}

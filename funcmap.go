@@ -9,7 +9,6 @@ import (
 )
 
 var FuncMap = 	template.FuncMap{
-					"GetQuery": GetQuery,
 					"ConfigValue": ConfigValue,
 					"ListCampaigns": ListCampaigns,
 					"PrettyString": PrettyString,
@@ -22,6 +21,7 @@ var FuncMap = 	template.FuncMap{
 					"ParseMarkdown": ParseMarkdown,
 					"ParseActionMessage": ParseActionMessage,
 					"HTMLEscape": HTMLEscape,
+					"SearchMessages": SearchMessages,
 
 					// "inc" stands for "incredible" because
 					// what the fuck why can't i just do arithmetic in templates

@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+		<script src="/resources/search.js" type="text/javascript"></script>
+	</head>
+	<body>
+		{{$file := index .Values 2}}
+		{{$values := index .Query "search"}}
+		{{$areaq := index .Query "areaq"}}
+		{{$valuelen := len $values}}
+		{{$areaqlen := len $areaq}}
+		{{$area := ""}}
+		{{if ge $areaqlen 1}}
+			{{$area = index $areaq 0}}
+		{{end}}
+		{{if le $valuelen 0}}
+			<h2>No search results given</h2>
+		{{else}}
+			{{$messages := SearchMessages $file $area $values}}
+			{{range $i, $v := $messages}}
+				$v.Content<br>
+			{{end}}
+		{{end}}
+	</body>
+</html>
