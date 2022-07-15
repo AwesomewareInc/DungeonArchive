@@ -1,0 +1,326 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"lay",
+				"layout_dropdown"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: create p",
+				"Package Control: Create Package File"
+			],
+			[
+				"Package Control: insta",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package In",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/gavin/Projects/DungeonArchive/go.mod",
+		"/home/gavin/Projects/DungeonArchive/pages/campaign_search.html",
+		"/home/gavin/Projects/FunnyWarsShooterProject/go.work",
+		"/home/gavin/Projects/DungeonArchive/main.go",
+		"/home/gavin/Projects/DungeonArchive/pages/campaign_messages.html",
+		"/home/gavin/Projects/DungeonArchive/funcmap.go",
+		"/home/gavin/Projects/DungeonArchive/resources/style.css",
+		"/home/gavin/Projects/DungeonArchive/pages/campaign.html",
+		"/home/gavin/Projects/DungeonArchive/messages.go",
+		"/home/gavin/Projects/DungeonArchive/pages/campaign_results.html",
+		"/home/gavin/Projects/DungeonArchive/resources/search.js",
+		"/home/gavin/Projects/DungeonArchive/pages/results.html",
+		"/home/gavin/Projects/DungeonArchive/strings.go",
+		"/home/gavin/Projects/DungeonArchive/pages/index.html",
+		"/home/gavin/Projects/DungeonArchive/README.md",
+		"/home/gavin/Projects/DungeonArchive/campaigns.go",
+		"/home/gavin/Projects/DungeonArchive/markdown.go",
+		"/home/gavin/Projects/DungeonArchive/resources/funny_wars_original_messages.json",
+		"/home/gavin/Projects/DungeonArchive/.gitignore",
+		"/home/gavin/Projects/DungeonArchive/config.go",
+		"/home/gavin/Projects/site/internalpages/dirlist.html",
+		"/home/gavin/Projects/site/internalpages/index.html",
+		"/home/gavin/Projects/DungeonArchive/resources/.gitignore",
+		"/home/gavin/Projects/site/main.go",
+		"/home/gavin/Projects/site/file.go",
+		"/home/gavin/Projects/site/internalpages/generic_image.html",
+		"/home/gavin/Projects/site/internalpages/generic_text.html",
+		"/home/gavin/Projects/site/internalpages/has_script.html",
+		"/home/gavin/Projects/site/internalpages/jstest.html",
+		"/home/gavin/Projects/site/internalpages/no_script.html",
+		"/home/gavin/Projects/DungeonArchive/config.example.toml",
+		"/home/gavin/Projects/site/time.go",
+		"/home/gavin/Projects/DungeonArchive/message_blocks/.gitignore",
+		"/home/gavin/Projects/YASE/fuck.txt",
+		"/home/gavin/Projects/YASE/test.json",
+		"/home/gavin/Projects/YASE/subl",
+		"/tmp/xa-7NM3O1/project.json",
+		"/home/gavin/Projects/YASE/core/jsonerror.go",
+		"/home/gavin/Projects/YASE/core/memory.go",
+		"/home/gavin/Projects/YASE/core/events.go",
+		"/home/gavin/Projects/YASE/core/core.go",
+		"/home/gavin/Projects/YASE/core/api.go",
+		"/home/gavin/Projects/YASE/README.md",
+		"/home/gavin/Projects/YASE/.gitignore",
+		"/home/gavin/Projects/YASE/web/yase.wasm",
+		"/home/gavin/Projects/YASE/core/syscall/syscall_normal.go",
+		"/home/gavin/Projects/YASE/web/test.json",
+		"/home/gavin/Projects/YASE/main.go",
+		"/home/gavin/Projects/YASE/core/syscall/syscall_js.go",
+		"/home/gavin/Projects/YASE/Makefile",
+		"/home/gavin/Projects/YASE/core/assembly/assembly_js.go",
+		"/home/gavin/Projects/YASE/core/assembly/assembly_x86.go",
+		"/home/gavin/Projects/YASE/web/index.html",
+		"/home/gavin/Projects/YASE/web/gofill.js",
+		"/home/gavin/Projects/YASE/core/assembly/syscall_js.go",
+		"/home/gavin/Projects/YASE/shorter_test.json",
+		"/home/gavin/Projects/YASE/core/print_regular.go",
+		"/home/gavin/Projects/YASE/core/print_wasm.go",
+		"/home/gavin/Projects/YASE/web/wasm_exec.js",
+		"/home/gavin/Projects/YASE/web/server.go",
+		"/home/gavin/Projects/GoScratch/README.md",
+		"/home/gavin/Projects/GoScratch/api.go",
+		"/home/gavin/Projects/GoScratch/memory.go",
+		"/home/gavin/Projects/LearningRust/helloworld/welcometohell.rs",
+		"/home/gavin/Projects/site/font.go",
+		"/home/gavin/Projects/site/pages/main.html",
+		"/home/gavin/Projects/PMDEOS_MapGen_GUI/dungeon_eos/RandomGen.py",
+		"/home/gavin/Projects/PMDEOS_MapGen_GUI/dungeon_eos/DungeonAlgorithm.py",
+		"/home/gavin/Projects/PMDEOS_MapGen_GUI/README.md",
+		"/home/gavin/Projects/PMDEOS_MapGen_GUI/main.py",
+		"/home/gavin/Projects/site/geneva.go",
+		"/home/gavin/.config/sublime-text/Packages/Color Scheme - Default/Mariana.sublime-color-scheme",
+		"/home/gavin/.config/sublime-text/Packages/Theme - Default/Default.sublime-theme",
+		"/home/gavin/.config/sublime-text/Packages/User/Default.sublime-theme",
+		"/home/gavin/Projects/PMDEOS_MapGen/grid.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/dungeon.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/unknown.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/tile.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/rooms.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/README.md",
+		"/home/gavin/Projects/PMDEOS_MapGen/maze.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/hallways.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/algorithm.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/generator.go",
+		"/home/gavin/Projects/pytago/pytago/tests/test_core.py",
+		"/home/gavin/Projects/PMDEOS_MapGen/DungeonAlgorithm.py",
+		"/home/gavin/Projects/PMDEOS_MapGen/RandomGen.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/DungeonAlgorithm.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/TileData.go",
+		"/home/gavin/Projects/PMDEOS_MapGen/DungeonData.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/colormap.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/generation.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/player.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/go.mod",
+		"/home/gavin/Projects/FunnyWarsShooterProject/keyboard.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/mouse.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/main.go",
+		"/home/gavin/Sources/esound-0.2.41/Makefile",
+		"/home/gavin/Sources/engine/core/dispatcher.go",
+		"/home/gavin/Projects/pytago/pytago/go_ast/ast_snippets.py",
+		"/tmp/test.go",
+		"/tmp/test.py",
+		"/home/gavin/Projects/pytago/pytago/go_ast/core.py",
+		"/home/gavin/Projects/pytago/examples/listappend.go",
+		"/home/gavin/Projects/pytago/scripts/generate_readme.py",
+		"/home/gavin/Projects/pytago/examples/classes.py",
+		"/home/gavin/Projects/pytago/examples/bitwisenot.go",
+		"/home/gavin/Projects/pytago/examples/bitwisenot.py",
+		"/home/gavin/Projects/pytago/examples/listappend.py",
+		"/home/gavin/Projects/pytago/examples/asyncawait.py",
+		"/home/gavin/Projects/pytago/pytago/go_ast/parsing.py",
+		"/home/gavin/Projects/pytago/pytago/go_ast/py_snippets.py",
+		"/home/gavin/Projects/pytago/pytago/go_ast/transformers.py",
+		"/home/gavin/Projects/pytago/Dockerfile",
+		"/home/gavin/.config/fish/config.fish",
+		"/home/gavin/Projects/pytago/.gitignore",
+		"/home/gavin/Projects/pytago/pytago/app.py",
+		"/home/gavin/Projects/pytago/README.md",
+		"/home/gavin/Projects/pytago/Makefile",
+		"/home/gavin/Projects/pytago/setup.py",
+		"/home/gavin/Projects/pytago/pytago/static/index.html",
+		"/home/gavin/Projects/pytago/pytago/core.py",
+		"/home/gavin/Projects/pytago/pytago/__init__.py",
+		"/tmp/fz3temp-2/jstest.html",
+		"/home/gavin/Projects/FunnyWarsShooterProject/mazegeneration.go",
+		"/home/gavin/Projects/FunnyWarsShooterProject/maze.go",
+		"/home/gavin/Projects/site/resources/about.css",
+		"/home/gavin/Projects/site/internalpages/direntry.html"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 122.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.diagnostics":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": ".sublime-project.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 350.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 185.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

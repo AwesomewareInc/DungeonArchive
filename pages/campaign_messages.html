@@ -62,8 +62,7 @@
 					{{$hiddenToggle = false}}
 				{{end}}
 				{{/*<!--  start the message  -->*/}}
-				<span class='message'>
-
+				<span id='{{$v.ID}}' class='message'>
 					{{$type := GetMessageType $v}}
 					{{if eq $type "action"}}
 						{{$message := ParseActionMessage $v}}

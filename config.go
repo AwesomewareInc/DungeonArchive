@@ -1,8 +1,8 @@
-package main 
+package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/BurntSushi/toml"
 )
@@ -10,8 +10,8 @@ import (
 // File for working with the config.toml; functions here don't return errors because they can be used in a template page.
 
 var Config struct {
-	Title 			string
-	Description 	string
+	Title       string
+	Description string
 }
 
 func init() {
@@ -27,22 +27,24 @@ func init() {
 	}
 
 	file, err := os.ReadFile(filename)
-	if(err != nil) {
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	_, err = toml.Decode(string(file),&Config)
-	if(err != nil) {
+	_, err = toml.Decode(string(file), &Config)
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 }
 
 // Function for getting config values, for the template files.
-func ConfigValue(name string) (string) {
-	switch(name) {
-		case "Title": return Config.Title
-		case "Description": return Config.Description
+func ConfigValue(name string) string {
+	switch name {
+	case "Title":
+		return Config.Title
+	case "Description":
+		return Config.Description
 	}
 	return ""
 }

@@ -12,9 +12,26 @@
 		<center>
 			<h2>Search through {{$pfile}}</h2>
 		</center>
+		<span id='options_skeleton' style='display: none;'>
+			<select required>
+				<option value=''></option>
+				<option value='and'>and...</option>
+				<option value='and-or'>and/or...</option>
+				<option value='interact'>interacting with...</option>
+				<option value='talking'>talking about...</option>
+				<option value='talking'>in...</option>
+			</select>
+		</span>
 		<form id='queries'><input type='button' value='+' id='add-character'><input type='button' value='-' id='remove-character'>  Find...<br>
-			<span id='staple' class='query'><input type='text' placeholder='Character'></span>
+			<span id='staple' class='query'><input type='text' required></span>
 			<input type="button" id="submit" value="Search">
 		</form>
+		<br><br><br><br>
+		<h2>Character conjunction key:</h2>
+		A <em>"and"</em> B: get messages from A followed by B doing the final action.<br>
+		A <em>"and/or"</em> B: get messages from A doing the final action and get messages of B doing the final action.<br>
+		A <em>"interacting with"</em> B: get messages from A followed directly by B<br>
+		A <em>"talking about"</em> B: get messages from A with a certain keyword.<br>
+		<em>"in"</em>: narrow the search results to a specific area.<br>
 	</body>
 </html>

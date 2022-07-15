@@ -3,7 +3,8 @@
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 		<script src="/resources/search.js" type="text/javascript"></script>
 	</head>
-	<body>
+	<body class='nobg'>
+		{{/*<!-- Arguments from URL -->*/}}
 		{{$file := index .Values 2}}
 		{{$values := index .Query "search"}}
 		{{$areaq := index .Query "areaq"}}
@@ -13,12 +14,103 @@
 		{{if ge $areaqlen 1}}
 			{{$area = index $areaq 0}}
 		{{end}}
+
+		{{/*<!-- No results given-->*/}}
 		{{if le $valuelen 0}}
 			<h2>No search results given</h2>
 		{{else}}
 			{{$messages := SearchMessages $file $area $values}}
+			<h2>Search results for {{$values}}</h2>
+			{{/*<!-- No results message -->*/}}
+			{{$messagelen := len $messages}}
+			{{if le $messagelen 1}}
+				<b>No messages found</b>
+			{{else}}
+			{{/*<!-- Last "last/next" message gotten; for checking them against the current "last/next" message -->*/}}
+			{{$lastNext := index $messages 0}}
+			{{$lastLast := index $messages 0}}
+			{{/*<!-- Last channel gotten; for grouping them. -->*/}}
+			{{$lastChannel := ""}}
+			{{/*<!-- For each message we get... -->*/}}
 			{{range $i, $v := $messages}}
-				$v.Content<br>
+				{{/*<!-- If it's not in the last channel we got, display a channel indicator. -->*/}}
+				{{if ne $lastChannel $v.Area}}
+				<br>
+				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a>
+				{{end}}
+				<span class='message'>
+					{{/*<!-- -->*/}}
+
+					{{/*<!-- relevant values -->*/}}
+					{{$author := $v.Author}}
+					{{$content := $v.Content}}
+					{{$next := $v.Next}}
+					{{$last := $v.Last}}
+
+					{{/*<!-- Whether or not to show the next or previous message -->*/}}
+					{{$showLast := true}}
+					{{$showNext := true}}
+
+					{{/*<!-- First, check if the poster of the next or previous message is a subject -->*/}}
+					{{/*<!-- If so, don't the message.-->*/}}
+					{{if NameInSearch $last.Author $values}}
+						{{$showLast = false}}
+					{{end}}
+					{{if NameInSearch $next.Author $values}}
+						{{$showNext = false}}
+					{{end}}
+
+					{{/*<!-- Also, don't show a last/next message if it's empty -->*/}}
+					{{if eq $last.Content ""}}
+						{{$showLast = false}}
+					{{end}}
+					{{if eq $next.Content ""}}
+						{{$showNext = false}}
+					{{end}}
+
+					{{/*<!-- Or if it's the same as the last "last/next" message we got. -->*/}}
+					{{if eq $last $lastNext}}
+						{{$showLast = false}}
+					{{end}}
+					{{if eq $next $lastLast}}
+						{{$showNext = false}}
+					{{end}}
+
+					{{/*<!-- If we're supposed to show the last message -->*/}}
+					{{if $showLast}}
+						{{/*<!-- And we're not at the beginning of the search results-->*/}}
+						{{if ne $i 0}}
+							<span class='message-fadein'>
+								{{$last.Author}}: {{ParseMarkdown $last.Content}}
+							</span>
+						{{end}}
+					{{end}}
+
+					{{/*<!-- The message we got -->*/}}
+					<b>{{$author}}</b>: {{ParseMarkdown $content}}
+
+					{{/*<!-- If we're supposed to show the next message -->*/}}
+					{{if $showNext}}
+						{{/*<!-- If the next message is posted by the subject of the message -->*/}}
+						{{if eq $next.Next.Author $author}}
+						</span>
+						<span class='message semitransparent'>
+							<b>{{$next.Author}}</b>: {{ParseMarkdown $next.Content}}
+						{{/*<!-- Otherwise, treat it as the last and fade it out. -->*/}}
+						{{else}}
+						<span class='message-fadeout'>
+							{{$next.Author}}: {{ParseMarkdown $next.Content}}
+						</span>
+						{{end}}
+					{{end}}
+
+					{{/*<!-- Update the messages/channel to search against -->*/}}
+					{{$lastNext = $next}}
+					{{$lastLast = $last}}
+					{{$lastChannel = $v.Area}}
+
+				</span>
+			{{end}}
 			{{end}}
 		{{end}}
 	</body>

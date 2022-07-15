@@ -9,13 +9,9 @@ window.onload = function() {
 		lastQuery = document.getElementById("staple");
 		// Add a query before that last query
 		span = document.createElement("span");
-		span.innerHTML = "<input type='text' placeholder='Character'>";
-		// Add on some text based on how many queries we have.
-		if(children.length-8 > 1) {
-			span.innerHTML += " and";
-		} else {
-			span.innerHTML += " interacting with";
-		}
+		span.innerHTML = "<input type='text'>";
+		// Add the option selector
+		span.innerHTML += document.getElementById("options_skeleton").innerHTML;
 		span.className = "query";
 		queries.insertBefore(span, children[5]);
 	})
@@ -33,13 +29,23 @@ window.onload = function() {
 		for (q in children) {
 			child = children[q]
 			if(typeof child != "object") {continue}
-			if(child.className != "query") {continue}
+			console.log(child);
 			input = child.getElementsByTagName("input")[0];
 			text += input.value+",";
+			// get the value of the dropdown next to it.
+			dropdown = child.getElementsByTagName("select");
+			
 		}
 		url = window.location.href
 		url = url.replace("/search?","",1)
 		url = url.replace("/search","",1)
-		window.location.href = url+"/results?search="+text;
+		// If there's no text, just sent us to the all page.
+		// (if the )
+		if(text[0] == ",") {
+			//window.location.href = url+"/messages/all";
+		} else {
+		// Otherwise, send us to a page with the results we put in.
+			//window.location.href = url+"/results?search="+text;
+		}
 	})
 }
