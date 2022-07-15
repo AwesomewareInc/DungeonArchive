@@ -7,20 +7,14 @@
 		{{/*<!-- Arguments from URL -->*/}}
 		{{$file := index .Values 2}}
 		{{$values := index .Query "search"}}
-		{{$areaq := index .Query "areaq"}}
 		{{$valuelen := len $values}}
-		{{$areaqlen := len $areaq}}
-		{{$area := ""}}
-		{{if ge $areaqlen 1}}
-			{{$area = index $areaq 0}}
-		{{end}}
 
 		{{/*<!-- No results given-->*/}}
 		{{if le $valuelen 0}}
 			<h2>No search results given</h2>
 		{{else}}
-			{{$messages := SearchMessages $file $area $values}}
-			<h2>Search results for {{$values}}</h2>
+			{{$messages := SearchMessages $file $values}}
+			<h2>Search results for {{PrettyPrintValues $values}}</h2>
 			{{/*<!-- No results message -->*/}}
 			{{$messagelen := len $messages}}
 			{{if le $messagelen 1}}
@@ -51,16 +45,7 @@
 					{{$showLast := true}}
 					{{$showNext := true}}
 
-					{{/*<!-- First, check if the poster of the next or previous message is a subject -->*/}}
-					{{/*<!-- If so, don't the message.-->*/}}
-					{{if NameInSearch $last.Author $values}}
-						{{$showLast = false}}
-					{{end}}
-					{{if NameInSearch $next.Author $values}}
-						{{$showNext = false}}
-					{{end}}
-
-					{{/*<!-- Also, don't show a last/next message if it's empty -->*/}}
+					{{/*<!-- First, don't show a last/next message if it's empty -->*/}}
 					{{if eq $last.Content ""}}
 						{{$showLast = false}}
 					{{end}}
@@ -68,7 +53,7 @@
 						{{$showNext = false}}
 					{{end}}
 
-					{{/*<!-- Or if it's the same as the last "last/next" message we got. -->*/}}
+					{{/*<!-- Or if it's the same as the last message we got. -->*/}}
 					{{if eq $last $lastNext}}
 						{{$showLast = false}}
 					{{end}}
@@ -76,30 +61,52 @@
 						{{$showNext = false}}
 					{{end}}
 
+					{{/*<!-- 
+							and then we take the KISS principle to the extreme because honestly
+							no amount of error checking is gonna make these next two things not
+							needed
+						-->*/}}
+
+					{{/*<!-- Don't show the last message if it was the last in the messages -->*/}}
+					{{$h := Dec $i}}
+					{{if ge $h 0}}
+						{{if eq $last (index $messages $h)}}
+							{{$showLast = false}}
+						{{end}}
+					{{end}}
+
+					{{/*<!-- Don't show the next message if it's the next in the messages -->*/}}
+					{{$j := Inc $i}}
+					{{if gt $messagelen $j}}
+						{{if eq $next (index $messages $j)}}
+							{{$showNext = false}}
+						{{end}}
+					{{end}}
+
 					{{/*<!-- If we're supposed to show the last message -->*/}}
 					{{if $showLast}}
 						{{/*<!-- And we're not at the beginning of the search results-->*/}}
 						{{if ne $i 0}}
 							<span class='message-fadein'>
-								{{$last.Author}}: {{ParseMarkdown $last.Content}}
+								{{$last.Author}}: {{ParseMarkdown (HTMLEscape $last.Content)}}
 							</span>
 						{{end}}
 					{{end}}
 
 					{{/*<!-- The message we got -->*/}}
-					<b>{{$author}}</b>: {{ParseMarkdown $content}}
+					<b>{{$author}}</b>: {{ParseMarkdown (HTMLEscape $content)}}
 
 					{{/*<!-- If we're supposed to show the next message -->*/}}
 					{{if $showNext}}
-						{{/*<!-- If the next message is posted by the subject of the message -->*/}}
-						{{if eq $next.Next.Author $author}}
+						{{/*<!-- If the message following the next message is from the subject -->*/}}
+						{{if NameInSearch $next.Next.Author $values}}
 						</span>
 						<span class='message semitransparent'>
-							<b>{{$next.Author}}</b>: {{ParseMarkdown $next.Content}}
+							<b>{{$next.Author}}</b>: {{ParseMarkdown (HTMLEscape $next.Content)}}
 						{{/*<!-- Otherwise, treat it as the last and fade it out. -->*/}}
 						{{else}}
 						<span class='message-fadeout'>
-							{{$next.Author}}: {{ParseMarkdown $next.Content}}
+							{{$next.Author}}: {{ParseMarkdown (HTMLEscape $next.Content)}}
 						</span>
 						{{end}}
 					{{end}}

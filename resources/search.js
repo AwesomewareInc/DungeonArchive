@@ -26,26 +26,44 @@ window.onload = function() {
 		text = "";
 		// we avoid just doing "getElementsByClassName" since some very old browsers don't support that.
 		children = queries.childNodes;
+		shouldContinue = true;
 		for (q in children) {
 			child = children[q]
+
 			if(typeof child != "object") {continue}
-			console.log(child);
+			if(child.getElementsByTagName == undefined) {continue}
+
+			// get the value of the input box.
 			input = child.getElementsByTagName("input")[0];
-			text += input.value+",";
+			if(input != undefined) {
+				input.classList.remove("unselected")
+				if(input.value == "") {
+					shouldContinue = false;
+					input.classList.add("unselected")
+				} else {
+					text += input.value;
+				}
+			}
+			
 			// get the value of the dropdown next to it.
 			dropdown = child.getElementsByTagName("select");
-			
+			if(dropdown.length <= 0) {continue}
+			option = dropdown[0].options[dropdown[0].selectedIndex].value
+			dropdown[0].classList.remove("unselected")
+			if(option == "") {
+				shouldContinue = false;
+				dropdown[0].classList.add("unselected")
+			} else {
+				text += "::"+option
+			}
+			text += ","
 		}
-		url = window.location.href
-		url = url.replace("/search?","",1)
-		url = url.replace("/search","",1)
-		// If there's no text, just sent us to the all page.
-		// (if the )
-		if(text[0] == ",") {
-			//window.location.href = url+"/messages/all";
-		} else {
-		// Otherwise, send us to a page with the results we put in.
-			//window.location.href = url+"/results?search="+text;
+		if(shouldContinue) {
+			url = window.location.href
+			url = url.replace("/search?","",1)
+			url = url.replace("/search","",1)
+			window.location.href = url+"/results?search="+text;
 		}
+
 	})
 }

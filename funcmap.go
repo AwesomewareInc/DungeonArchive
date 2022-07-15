@@ -9,25 +9,30 @@ import (
 )
 
 var FuncMap = template.FuncMap{
-	"ConfigValue":        ConfigValue,
-	"ListCampaigns":      ListCampaigns,
-	"PrettyString":       PrettyString,
-	"ListAreas":          ListAreas,
-	"StringNoExtension":  StringNoExtension,
-	"ListMessages":       ListMessages,
-	"GetMessageType":     GetMessageType,
-	"CombinedDate":       CombinedDate,
-	"DateString":         DateString,
-	"ParseMarkdown":      ParseMarkdown,
-	"ParseActionMessage": ParseActionMessage,
-	"HTMLEscape":         HTMLEscape,
-	"SearchMessages":     SearchMessages,
-	"NameInSearch":	  NameInSearch,
+	"ConfigValue":        	ConfigValue,
+	"ListCampaigns":      	ListCampaigns,
+	"PrettyString":       	PrettyString,
+	"ListAreas":          	ListAreas,
+	"StringNoExtension":  	StringNoExtension,
+	"ListMessages":       	ListMessages,
+	"GetMessageType":     	GetMessageType,
+	"CombinedDate":       	CombinedDate,
+	"DateString":         	DateString,
+	"ParseMarkdown":      	ParseMarkdown,
+	"ParseActionMessage": 	ParseActionMessage,
+	"HTMLEscape":         	HTMLEscape,
+	"SearchMessages":     	SearchMessages,
+	"NameInSearch":	  		NameInSearch,
+	"PrettyPrintValues": 	PrettyPrintValues,
 
 	// "inc" stands for "incredible" because
 	// what the fuck why can't i just do arithmetic in templates
 	"Inc": func(i int) int {
 		return i + 1
+	},
+
+	"Dec": func(i int) int {
+		return i - 1
 	},
 
 	"Sub": func(a, b int) int {

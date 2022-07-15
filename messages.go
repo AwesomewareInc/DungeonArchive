@@ -172,7 +172,7 @@ func InitCampaigns() {
 			}
 			// and if this message isn't null
 			if(message != nil) {
-				// register it to the authors/areas thing
+				// register it to the characters/areas thing
 				registerMessageObject(message)
 				message.PreceededBy = lastMessage
 				// set it as the previous message
@@ -288,50 +288,139 @@ func MatchNames(campaign, name string) ([]string) {
 }
 
 // Function for searching through a campaign's messages for character interactions
-func SearchMessages(campaign, area string, query_ []string) []*Message {
+func SearchMessages(campaign string, query_ []string) []*Message {
+	// Split the query up based on characters
 	query := strings.Split(query_[0],",")
-	var authors []string
-	for _, v := range query {
-		authors = append(authors, Sanitize(v))
-	}
-	// Get the author objects that match the first author name
-	firstAuthorMatches := MatchNames(campaign, authors[0])
 
-	// Then, get all messages from the people found.
+	// Split THOSE queries up based on actions
+	var values []string
+	for _, v := range query {
+		part := strings.Split(v,"::")
+		values = append(values,part[0])
+		if(len(part) <= 1) {
+			values = append(values,"terminate")
+		} else {
+			values = append(values,part[1])
+		}
+	}
+
+	// Get all the characters to look for 
+	var characters []string
+	for i := 0; i < len(values); i+=2 {
+		characters = append(characters, Sanitize(values[i]))
+	}
+
 	var allmessages []*Message
-	for _, a := range firstAuthorMatches {
+
+	// Get the authors that could possibly match the first one
+	character := values[0]
+	matches := MatchNames(campaign, Sanitize(character))
+
+	// And get the messages from them.
+	for _, a := range matches {
 		messages := Campaigns[campaign].Authors[a].Messages
 		for _, v := range messages {
 			allmessages = append(allmessages, v)
 		}
 	}
-	// And sort it by the time posted.
-	sort.Slice(allmessages, func(a, b int) bool {
-		return DateFormatted(allmessages[a].Timestamp).Before(DateFormatted(allmessages[b].Timestamp))
-	})
 
-	// If only one author is specified, we can just return those.
-	if(len(query) <= 1) {
-		return allmessages
-	// Otherwise, we'll have to search each message a little more throughly, and specifically, search the messages after it, to see if they're
-	// relevant to the search
-	} else {
-		// for now, only two characters are supported.
-		nextCharacterMatches := MatchNames(campaign, authors[1])
-		var allmessages_ []*Message
-		// for each of the messages we got earlier
-		for _, v := range allmessages {
-			// check if the message following it is from any of the characters we're looking for.
-			for _, a := range nextCharacterMatches {
-				author := Sanitize(v.Next().Author)
-				if(author == a) {
-					allmessages_ = append(allmessages_,v)
-					allmessages_ = append(allmessages_,v.Next())
+	// Then, go through the query and filter the messages list more and more based on the search values.
+	for i := 0; i < len(values); i+=2 {
+		// Name the values we want from the values array.
+		action := values[i+1]
+		var nextCharacter string
+		if(i+2 < len(values)) {
+			nextCharacter = Sanitize(values[i+2])
+		} else {
+			nextCharacter = ""
+		}
+
+		// And sort them by the time posted.
+		sort.Slice(allmessages, func(a, b int) bool {
+			return DateFormatted(allmessages[a].Timestamp).Before(DateFormatted(allmessages[b].Timestamp))
+		})
+
+		// Finally, filter those messages based on the values we got earlier
+		allmessages = FilterMessages(allmessages,action,nextCharacter,campaign)
+	}
+	return allmessages
+}
+
+// Function for above for filtering messages based on a certain criteria
+func FilterMessages(messages []*Message, action, nextCharacter string, campaign string) ([]*Message) {
+	var filtered []*Message
+
+	switch(action) {
+		// get messages from A followed by B
+		case "interacting-with":
+			nextCharacterMatches := MatchNames(campaign, nextCharacter)
+			// for each of the messages we got
+			for _, v := range messages {
+				nextAuthor := Sanitize(v.Next().Author)
+				// check if the message following it is from any of the characters we're looking for.
+				for _, a := range nextCharacterMatches {
+					// if the message is followed by narrator, walk through those messages to see if its eventually leads to a match
+					filtered_, add := addMessageIfFromNarrator(v.Next(),*(new([]*Message)),a)
+					// If it does...
+					if(add) {
+						filtered = append(filtered, v)
+						for _, v := range filtered_ {
+							filtered = append(filtered,v)
+						}
+					}
+					if(nextAuthor == a) {
+						if(!add) {
+							filtered = append(filtered,v)
+							filtered = append(filtered,v.Next())
+						}
+						filtered = addLastMessageIfFromSame(v,filtered)
+					}
 				}
 			}
-		}
-		return allmessages_
+		// get messages from A doing the final action and get messages of B doing the final action (or just existing).
+		case "and-or":
+
+		// get messages from A with a certain keyword.
+		case "talking-about":
+
+		// narrow the search results to a specific area.
+		case "in":
+			// for each of the messages we got
+			for _, v := range messages {
+				if(Sanitize(v.Area) == nextCharacter) {
+					filtered = append(filtered,v)
+				}
+			}
+		case "terminate":
+			return messages
+		default:
+			return filtered
 	}
+	return filtered
+}
+// recursive function for above to add the last message if it's from the same author
+func addLastMessageIfFromSame(message *Message, messages []*Message) (newmessages []*Message) {
+	newmessages = messages
+	prevAuthor := Sanitize(message.Last().Author)
+	if(prevAuthor == Sanitize(message.Author)) {
+		newmessages = append(newmessages,message.Last())
+		newmessages = addLastMessageIfFromSame(message.Last(),newmessages)
+	}
+	return newmessages
+}
+// recursive function for walking through a block of narrator messages to see if it eventually leads to another match.
+func addMessageIfFromNarrator(message *Message, messages []*Message, nextCharacter string) (newmessages []*Message, eventual bool) {
+	newmessages = messages
+	if(message.Fictional == "False") {
+		newmessages = append(newmessages,message)
+		newmessages, eventual = addMessageIfFromNarrator(message.Next(),newmessages,nextCharacter)
+	} else {
+		if(Sanitize(message.Author) == nextCharacter) {
+			eventual = true
+			newmessages = append(newmessages,message)
+		}
+	}
+	return newmessages, eventual
 }
 
 
@@ -342,7 +431,8 @@ func NameInSearch(value_ string, query []string) (bool) {
 	// We want to sanitize what we get before comparing them.
 	var names []string
 	for _, v := range names_ {
-		names = append(names, Sanitize(v))
+		name := strings.Split(v,"::")
+		names = append(names, Sanitize(name[0]))
 	}
 	// Same for the other value we're given.
 	value := Sanitize(value_)
@@ -353,4 +443,21 @@ func NameInSearch(value_ string, query []string) (bool) {
 		}
 	}
 	return false
+}
+
+// Function for pretty-printing the query array
+func PrettyPrintValues(query []string) (result string) {
+	characters := strings.Split(query[0],",")
+	for _, v := range characters {
+		parts := strings.Split(v,"::")
+		result += Capitalize(parts[0])
+		if(len(parts) > 1) {
+			switch(parts[1]) {
+				case "interacting-with":	result += " interacting with "
+				case "and-or":				result += " and/or "
+				case "in": 					result += " in "
+			}
+		}
+	}
+	return
 }

@@ -66,11 +66,5 @@ func PrettyString(value string) string {
 	name = strings.Replace(name, "_", " ", 9)
 	name = strings.Replace(name, "-", " ", 9)
 	// capitalize the first letter of every word
-	namesplit := strings.Split(name, " ")
-	var namefinal string
-	for _, v := range namesplit {
-		namefinal += strings.ToUpper(v[:1])
-		namefinal += v[1:] + " "
-	}
-	return namefinal
+	return Capitalize(name)
 }
