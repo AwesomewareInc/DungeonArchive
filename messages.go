@@ -66,7 +66,8 @@ func InitRegexes() {
 	Regexps = make(map[string]*regexp.Regexp)
 	Regexps["italics"] = regexp.MustCompile(`^(\*)([^\*]*)(\*)$`)
 	Regexps["bold"] = regexp.MustCompile(`^(\*){2}([^\*]*)(\*){2}$`)
-	Regexps["lettersonly"] = regexp.MustCompile(`[^A-z]*`)
+	// the bare minimum for a character's name; useful for the search page
+	Regexps["sanitization"] = regexp.MustCompile(`[^A-z0-9]*`)
 	// experimental, may be removed: regexp for determining if an author was a narrator
 	Regexps["narrator"] = regexp.MustCompile(`^((\?)*)$`)
 }
@@ -135,7 +136,7 @@ func InitCampaigns() {
 			area.Messages = append(area.Messages, message)
 			// Check the author tag of the new message to see if
 			// the corresponding author exists, and if not create it.
-			authorName := strings.ToLower(Regexps["lettersonly"].ReplaceAllString(message.Author,""))
+			authorName := Sanitize(message.Author)
 			var author *Author
 			if newCampaign.Authors[authorName] == nil {
 				author = &Author{}
@@ -182,9 +183,9 @@ func InitCampaigns() {
 	}
 }
 
-// Shorthand for sanitizing a string based on Regexps["lettersonly"]
+// Shorthand for sanitizing a string based on Regexps["sanitization"]
 func Sanitize(value string) (string) {
-	return strings.ToLower(Regexps["lettersonly"].ReplaceAllString(value,""))
+	return strings.ToLower(Regexps["sanitization"].ReplaceAllString(value,""))
 }
 
 // Function for listing the areas in a campaign
