@@ -283,7 +283,6 @@ func MatchNames(campaign, name string) ([]string) {
 			a.Name[len(a.Name)-namelen:] == name || // ends with
 			a.Name == name) { // equals 
 				matches = append(matches,a.Name)
-			}
 		}
 	}
 	return matches
