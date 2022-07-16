@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -108,6 +109,7 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 
 func getPagename(fullpagename string) (string, []string) {
 	// Split the pagename into sections
+	fmt.Println(fullpagename)
 	values := strings.Split(fullpagename, "/")
 
 	// Then try and get the relevant pagename from that, accounting for many specifics.
