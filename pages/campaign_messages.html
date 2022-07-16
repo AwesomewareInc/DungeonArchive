@@ -24,6 +24,9 @@
 			{{$hiddenToggle := false}}
 			{{$combinedDate := 0}}
 			
+			{{/*<!-- Last channel gotten; for grouping them. -->*/}}
+			{{$lastChannel := ""}}
+
 			{{range $i, $v := $messages }}
 
 			{{/*<!--  yes there really is a case where a...blank message is just...returned...for some reason... -->*/}}
@@ -62,11 +65,15 @@
 					{{$hiddenToggle = false}}
 				{{end}}
 				{{/*<!--  start the message  -->*/}}
+				{{if eq $area "all"}}
+				{{if ne $lastChannel $v.Area}}
+				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
+				{{end}}
+				{{end}}
 				<span id='{{$v.ID}}' class='message'>
 					{{$type := GetMessageType $v}}
 					{{if eq $type "action"}}
-						{{$message := ParseActionMessage $v}}
-						<em>{{$v.Author}}{{ParseMarkdown $message}}</em>
+						<em>{{$v.Author}} {{ParseMarkdown $content}}</em>
 					{{else if eq $type "loud"}}
 						<b>{{$v.Author}}:</b> <span class='loud'>{{ParseMarkdown $content}}</span>
 					{{else if eq $type "narration"}}
@@ -88,6 +95,7 @@
 				</span>
 			{{end}}
 			{{end}}
+			{{$lastChannel = $v.Area}}
 			{{end}}
 			{{if $hiddenToggle}}
 				</span>

@@ -257,6 +257,7 @@ func GetMessageType(message Message) string {
 
 // Function for editing a message marked as an action; it takes the author's name out if it can and
 // uncapitalizes the first letter
+// (unused, this side of the project is being shelved for a bit due to it's complexity)
 func ParseActionMessage(message Message) string {
 	content, noSpace := StripName(message)
 	content = HTMLEscape(content)
