@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -112,9 +113,10 @@ func getPagename(fullpagename string) (string, []string) {
 		fullpagename = fullpagename[1:]
 	}
 	values := strings.Split(fullpagename, "/")
+	fmt.Println(values[0])
 
 	// Then try and get the relevant pagename from that, accounting for many specifics.
-	pagename := values[1]
+	pagename := values[0]
 	// If it's blank, set it to the default page.
 	if pagename == "" {
 		return "index", values
@@ -123,13 +125,13 @@ func getPagename(fullpagename string) (string, []string) {
 	if pagename == "resources" {
 		return fullpagename, values
 	}
-	// If the URL has three parts, then the third part should be an internal page
+	// If the URL has two parts, then the second part should be an internal page
 	// prefixed with campaign
-	if len(values) > 3 {
-		if values[3] == "" {
+	if len(values) > 2 {
+		if values[2] == "" {
 			return "campaign", values
 		} else {
-			return "campaign_" + values[3], values
+			return "campaign_" + values[2], values
 		}
 
 	}

@@ -1,13 +1,13 @@
 <html>
 	<head>
-		{{$area := index .Values 4}}
+		{{$area := index .Values 3}}
 		{{if ne $area ""}}
 		<title>{{PrettyString $area}}</title>
 		{{end}}
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		{{$file := index .Values 2}}
+		{{$file := index .Values 1}}
 		{{$filene := StringNoExtension $file}}
 		
 		{{if eq $area ""}}
