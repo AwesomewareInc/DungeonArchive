@@ -67,7 +67,7 @@ func InitRegexes() {
 	Regexps["italics"] = regexp.MustCompile(`^(\*)([^\*]*)(\*)$`)
 	Regexps["bold"] = regexp.MustCompile(`^(\*){2}([^\*]*)(\*){2}$`)
 	// the bare minimum for a character's name; useful for the search page
-	Regexps["sanitization"] = regexp.MustCompile(`[^A-z0-9]*`)
+	Regexps["sanitization"] = regexp.MustCompile(`[^A-z0-9\-]*`)
 	// experimental, may be removed: regexp for determining if an author was a narrator
 	Regexps["narrator"] = regexp.MustCompile(`^((\?)*)$`)
 }
@@ -295,14 +295,23 @@ func SearchMessages(campaign string, query_ []string) []*Message {
 
 	// Split THOSE queries up based on actions
 	var values []string
+	var lastAction string
 	for _, v := range query {
 		part := strings.Split(v,"::")
 		values = append(values,part[0])
 		if(len(part) <= 1) {
-			values = append(values,"terminate")
+			// If the last action before termination was an and-or, we want to do a special
+			// termination that is described later
+			if(lastAction == "and-or") {
+				values = append(values,"add")
+			} else {
+				values = append(values,"terminate")
+			}
 		} else {
 			values = append(values,part[1])
+			lastAction = part[1]
 		}
+		
 	}
 
 	// Get all the characters to look for 
@@ -313,43 +322,74 @@ func SearchMessages(campaign string, query_ []string) []*Message {
 
 	var allmessages []*Message
 
-	// Get the authors that could possibly match the first one
-	character := values[0]
-	matches := MatchNames(campaign, Sanitize(character))
-
-	// And get the messages from them.
-	for _, a := range matches {
-		messages := Campaigns[campaign].Authors[a].Messages
-		for _, v := range messages {
-			allmessages = append(allmessages, v)
+	// Get the messages from the first character and add them (...if the second argument isn't "and-or")
+	// (because and-or will handle adding the messages for us)
+	if(len(values) >= 1) {
+		if(values[1] != "and-or") {
+			allmessages = GetMessagesFrom(campaign, values[0])
 		}
 	}
 
 	// Then, go through the query and filter the messages list more and more based on the search values.
 	for i := 0; i < len(values); i+=2 {
 		// Name the values we want from the values array.
-		action := values[i+1]
+		character := Sanitize(values[i])
+		action := Sanitize(values[i+1])
 		var nextCharacter string
 		if(i+2 < len(values)) {
 			nextCharacter = Sanitize(values[i+2])
 		} else {
 			nextCharacter = ""
 		}
-
-		// And sort them by the time posted.
-		sort.Slice(allmessages, func(a, b int) bool {
-			return DateFormatted(allmessages[a].Timestamp).Before(DateFormatted(allmessages[b].Timestamp))
-		})
+		var nextAction string
+		if(i+3 < len(values)) {
+			nextAction = Sanitize(values[i+3])
+		} else {
+			nextAction = "terminate"
+		}
+		// yes this is really how deep we have to go, since and/or sometimes takes the character
+		// to a function that wants nextCharacter
+		var nextNextCharacter string
+		if(i+4 < len(values)) {
+			nextNextCharacter = Sanitize(values[i+4])
+		} else {
+			nextNextCharacter = ""
+		}
 
 		// Finally, filter those messages based on the values we got earlier
-		allmessages = FilterMessages(allmessages,action,nextCharacter,campaign)
+		allmessages = FilterMessages(allmessages,campaign,character,action,nextCharacter,nextAction,nextNextCharacter)
 	}
+
+	// Sort all those by the time posted.
+	sort.Slice(allmessages, func(a, b int) bool {
+		return DateFormatted(allmessages[a].Timestamp).Before(DateFormatted(allmessages[b].Timestamp))
+	})
+
 	return allmessages
 }
 
-// Function for above for filtering messages based on a certain criteria
-func FilterMessages(messages []*Message, action, nextCharacter string, campaign string) ([]*Message) {
+// Function for searching the messages from a specific character
+func GetMessagesFrom(campaign, character string) ([]*Message) {
 	var filtered []*Message
+	// Get the authors that could possibly match the character
+	matches := MatchNames(campaign, Sanitize(character))
+
+	// And get the messages from them.
+	for _, a := range matches {
+		messages := Campaigns[campaign].Authors[a].Messages
+		for _, v := range messages {
+			filtered = append(filtered, v)
+		}
+	}
+	return filtered
+}
+
+
+// Function for above for filtering messages based on a certain criteria
+func FilterMessages(messages []*Message, campaign string, character, action, nextCharacter, nextAction, nextNextCharacter string) ([]*Message) {
+	fmt.Printf("given %v messages\n",len(messages))
+	var filtered []*Message
+	fmt.Printf("section %v::%v\n",character,action)
 
 	switch(action) {
 		// get messages from A followed by B
@@ -378,12 +418,24 @@ func FilterMessages(messages []*Message, action, nextCharacter string, campaign 
 					}
 				}
 			}
-		// get messages from A doing the final action and get messages of B doing the final action (or just existing).
+		// get messages from A doing the next action and get messages of B doing the next action (or just existing).
 		case "and-or":
-
+			// If the next command is another and-or, just add the current character's messages
+			if(nextAction == "and-or") {
+				nextAction = "add"
+			}
+			filtered = FilterMessages(messages, campaign, character, nextAction, nextNextCharacter, "", "")
 		// get messages from A with a certain keyword.
-		case "talking-about":
-
+		case "mentioning":
+			fmt.Println(nextCharacter)
+			// for each of the messages we got
+			for _, v := range messages {
+				// check if the message has the keyword
+				// (nextCharacter in this case would be the search string)
+				if(strings.Contains(Sanitize(v.Content),Sanitize(nextCharacter))) {
+					filtered = append(filtered, v)
+				}
+			}
 		// narrow the search results to a specific area.
 		case "in":
 			// for each of the messages we got
@@ -392,10 +444,20 @@ func FilterMessages(messages []*Message, action, nextCharacter string, campaign 
 					filtered = append(filtered,v)
 				}
 			}
+		// "and" is basically terminate but we add the last character's messages to the queue
+		case "add":
+			// get the messages from the last character
+			filtered_ := GetMessagesFrom(campaign, character)
+			// get a copy of the messages
+			messages_ := messages
+			// add the last character's messages to the mesages clone
+			for _, v := range filtered_ {
+				messages_ = append(messages_,v)
+			}
+			// return the messages clone
+			filtered = messages_
 		case "terminate":
 			return messages
-		default:
-			return filtered
 	}
 	return filtered
 }
@@ -457,6 +519,7 @@ func PrettyPrintValues(query []string) (result string) {
 				case "interacting-with":	result += " interacting with "
 				case "and-or":				result += " and/or "
 				case "in": 					result += " in "
+				case "mentioning": 			result += " mentioning "
 			}
 		}
 	}

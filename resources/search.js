@@ -22,7 +22,11 @@ window.onload = function() {
 		queries.childNodes[5].remove();
 	})
 
-	document.getElementById("submit").addEventListener("click",function() {
+	document.getElementById("submit").addEventListener("mouseup",function(e) {
+		windowOpenOptions = "_blank";
+		if(e.which == 1) {
+			windowOpenOptions = "_self";
+		}
 		text = "";
 		// we avoid just doing "getElementsByClassName" since some very old browsers don't support that.
 		children = queries.childNodes;
@@ -62,7 +66,7 @@ window.onload = function() {
 			url = window.location.href
 			url = url.replace("/search?","",1)
 			url = url.replace("/search","",1)
-			window.location.href = url+"/results?search="+text;
+			window.open(url+"/results?search="+text,windowOpenOptions);
 		}
 
 	})
