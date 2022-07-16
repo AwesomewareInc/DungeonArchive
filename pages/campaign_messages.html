@@ -74,6 +74,7 @@
 					{{else}}
 						<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
 					{{end}}
+					<br>
 				</span>
 			{{else}}
 				{{if $hiddenToggle}} 
@@ -83,6 +84,7 @@
 				{{end}}
 				<span class='message'>
 					<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
+					<br>
 				</span>
 			{{end}}
 			{{end}}

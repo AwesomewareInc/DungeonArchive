@@ -17,11 +17,11 @@
 		</center>
 		<span class='file-listing'>
 			<span class='file'>
-				<a href='/campaign/{{$file}}/messages/all'>All Messages</a>
+				<a href='/campaign/{{$file}}/messages/all'>All Messages</a><br>
 			</span>
 			{{range $i, $v := ListAreas $filene}}
 			<span class='file'>
-				<a href='/campaign/{{$file}}/messages/{{$v}}'>{{PrettyString $v}}</a>
+				<a href='/campaign/{{$file}}/messages/{{$v}}'>{{PrettyString $v}}</a><br>
 			</span>
 			{{end}}
 		</span>
