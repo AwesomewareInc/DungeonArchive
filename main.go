@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -80,10 +81,10 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(200)
 	w.Header().Set("Content-Type", contentType)
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Header().Set("Content-Name", filename)
+	w.WriteHeader(200)
+	fmt.Println(contentType)
 
 	var Info struct {
 		Values []string
