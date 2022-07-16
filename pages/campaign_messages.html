@@ -59,6 +59,10 @@
 
 			{{if eq $area "all"}}
 			{{if ne $lastChannel $v.Area}}
+			{{if $hiddenToggle}} 
+				</span>
+				{{$hiddenToggle = false}}
+			{{end}}
 			<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
 			{{end}}
 			{{end}}
