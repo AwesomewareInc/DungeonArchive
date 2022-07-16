@@ -57,6 +57,11 @@
 
 			{{$content := HTMLEscape $v.Content}}
 
+			{{if eq $area "all"}}
+			{{if ne $lastChannel $v.Area}}
+			<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
+			{{end}}
+			{{end}}
 			{{/*<!--  if it's from a fictional character  -->*/}}
 			{{if eq $v.Fictional "True"}}
 				{{/*<!--  end the 'out of character' block if we have to  -->*/}}
@@ -65,11 +70,6 @@
 					{{$hiddenToggle = false}}
 				{{end}}
 				{{/*<!--  start the message  -->*/}}
-				{{if eq $area "all"}}
-				{{if ne $lastChannel $v.Area}}
-				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
-				{{end}}
-				{{end}}
 				<span id='{{$v.ID}}' class='message'>
 					{{$type := GetMessageType $v}}
 					{{if eq $type "action"}}
