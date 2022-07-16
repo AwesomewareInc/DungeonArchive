@@ -2,10 +2,12 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template" // due to markdown and wanting better code we cannot use html/template lol
 	"time"
@@ -54,13 +56,16 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	var internal bool
 	var filename string
 
+	var file *os.File
+	var err error
+
 	// Check if it could refer to an internal page
-	if _, err := os.Open("pages/" + pagename + ".html"); err == nil {
+	if file, err = os.Open("pages/" + pagename + ".html"); err == nil {
 		filename = "pages/" + pagename + ".html"
 		internal = true
 		// Otherwise, check if it could refer to a regular file.
 	} else {
-		if _, err := os.Open("./" + pagename); err == nil {
+		if file, err = os.Open("./" + pagename); err == nil {
 			filename = "./" + pagename
 		} else {
 			// If all else fails, send a 404.
@@ -69,8 +74,15 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// get the mime-type.
+	contentType, err := GetContentType(file)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 
 	w.WriteHeader(200)
+	w.Header().Set("Content-Type", contentType)
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Header().Set("Content-Name", filename)
 
@@ -98,7 +110,7 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 
 func getPagename(fullpagename string) (string, []string) {
 	// Split the pagename into sections
-	if(fullpagename[0] == '/' && len(fullpagename) > 1) {
+	if fullpagename[0] == '/' && len(fullpagename) > 1 {
 		fullpagename = fullpagename[1:]
 	}
 	values := strings.Split(fullpagename, "/")
@@ -124,4 +136,23 @@ func getPagename(fullpagename string) (string, []string) {
 
 	}
 	return pagename, values
+}
+
+func GetContentType(output *os.File) (string, error) {
+	ext := filepath.Ext(output.Name())
+	file := make([]byte, 1024)
+	switch ext {
+	case ".htm", ".html":
+		return "text/html", nil
+	case ".css":
+		return "text/css", nil
+	case ".js":
+		return "application/javascript", nil
+	default:
+		_, err := output.Read(file)
+		if err != nil {
+			return "", err
+		}
+		return http.DetectContentType(file), nil
+	}
 }
