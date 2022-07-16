@@ -1,14 +1,15 @@
 <html>
 	<head>
 		<title>{{ConfigValue "Title"}}</title>
-		<link rel="stylesheet" href="resources/style.css" type="text/css">
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
 		<center>
 			<h1>{{ConfigValue "Title"}}</h1>
 			<p>{{ConfigValue "Description"}}</p>
 			{{range ListCampaigns}}
-			<a href='/campaign?file={{- .RawName}}'>{{- .Name}}</a><br>
+			{{$filene := StringNoExtension .RawName}}
+			<a href='/campaign/{{$filene}}'>{{- .Name}}</a><br>
 			{{end}}
 		</center>
 	</body>

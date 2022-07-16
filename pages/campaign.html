@@ -3,17 +3,28 @@
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		{{$file := GetQuery "file"}}
+		{{$file := index .Values 1}}
+		{{if eq $file ""}}
+		<h2>No campaign specified</h2>
+		{{else}}
 		{{$filene := StringNoExtension $file}}
 		{{$pfile := PrettyString $file}}
-		<h2>{{$pfile}}</h2>
-		<input type='text' placeholder='Search...'>
+		<center>
+			<h2>{{$pfile}}</h2>
+			<form action='/campaign/{{$file}}/search'>
+				<input type='submit' value='Search'>
+			</form>
+		</center>
 		<span class='file-listing'>
+			<span class='file'>
+				<a href='/campaign/{{$file}}/messages/all'>All Messages</a><br>
+			</span>
 			{{range $i, $v := ListAreas $filene}}
 			<span class='file'>
-				<a href='/campaign_messages?file={{$file}}&area={{$v}}'>{{PrettyString $v}}</a>
+				<a href='/campaign/{{$file}}/messages/{{$v}}'>{{PrettyString $v}}</a><br>
 			</span>
 			{{end}}
 		</span>
+		{{end}}
 	</body>
 </html>

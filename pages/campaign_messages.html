@@ -1,61 +1,80 @@
 <html>
 	<head>
+		{{$area := index .Values 3}}
+		{{if ne $area ""}}
+		<title>{{PrettyString $area}}</title>
+		{{end}}
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		{{$file := GetQuery "file"}}
+		{{$file := index .Values 1}}
 		{{$filene := StringNoExtension $file}}
-		{{$area := GetQuery "area"}}
+		
+		{{if eq $area ""}}
+			<b>No area specified</b>
+		{{else}}
 		{{$pfile := PrettyString $file}}
 		{{$parea := PrettyString $area}}
-		<h6>{{$pfile}}</h6>
+		<h6><a href='/campaign/{{$file}}'><- {{$pfile}}</a></h6>
 		<h2>{{$parea}}</h2>
+		{{$messages := ListMessages $filene $area}}
+		{{$messagelen := len $messages}}
+		{{if ge $messagelen 1}}
 		<span class='message-listing'>
 			{{$hiddenToggle := false}}
-			{{$messages := ListMessages $filene $area}}
 			{{$combinedDate := 0}}
-
+			
 			{{range $i, $v := $messages }}
 
-			<!-- yes there really is a case where a...blank message is just...returned...for some reason...-->
+			{{/*<!--  yes there really is a case where a...blank message is just...returned...for some reason... -->*/}}
 			{{if eq $v.Content ""}}
 			{{else}}
 
+			{{/*<!--  get the date and see how far off it is from the last date we got - -->*/}}
 			{{$combinedDate2 := CombinedDate $v.Timestamp}}
 			{{$diff := Sub $combinedDate2 $combinedDate}}
+			{{/*<!--  because we want to hide the date if it's two days off.  -->*/}}
 			{{if gt $diff 2}}
-				{{if $hiddenToggle}}
-					</span>
-				{{end}}
-				<center><small>
-					<!--- todo: find something slightly more accurate to display here, 
-						the time isn't accurate since we're account for at least twoi days of no messages --->
-					{{DateString $v.Timestamp}}
-				</small></center>
-				<hr>
-				{{if $hiddenToggle}}
-					<span class='hidden'>
-				{{end}}
-				{{$combinedDate = $combinedDate2}}
-			{{end}}
-
-			{{if eq $v.Fictional "True"}}
+				{{/*<!--  make sure that 'out of character' messages don't have the timestamps; in fact those should end here -->*/}}
 				{{if $hiddenToggle}} 
 					</span>
 					{{$hiddenToggle = false}}
 				{{end}}
-				<span class='message'>
-					<!-- todo: just implement markdown lol --->
+				<center><small>
+					{{/*
+					<!--- todo: find something slightly more accurate to display here, 
+						the time isn't accurate since we're account for at least twoi days of no messages --->
+					*/}}
+					{{DateString $v.Timestamp}}
+				</small></center>
+				<hr>
+				{{/*<!--  update the date to what we have now  -->*/}}
+				{{$combinedDate = $combinedDate2}}
+			{{end}}
+
+			{{$content := HTMLEscape $v.Content}}
+
+			{{/*<!--  if it's from a fictional character  -->*/}}
+			{{if eq $v.Fictional "True"}}
+				{{/*<!--  end the 'out of character' block if we have to  -->*/}}
+				{{if $hiddenToggle}} 
+					</span>
+					{{$hiddenToggle = false}}
+				{{end}}
+				{{/*<!--  start the message  -->*/}}
+				<span id='{{$v.ID}}' class='message'>
 					{{$type := GetMessageType $v}}
 					{{if eq $type "action"}}
-						<em>{{$v.Author}} {{StripRegex $v "italics name"}}</em>
+						{{$message := ParseActionMessage $v}}
+						<em>{{$v.Author}}{{ParseMarkdown $message}}</em>
 					{{else if eq $type "loud"}}
-						<b>{{$v.Author}}:</b> <span class='loud'>{{StripRegex $v "bold"}}</span>
+						<b>{{$v.Author}}:</b> <span class='loud'>{{ParseMarkdown $content}}</span>
 					{{else if eq $type "narration"}}
-						<em>{{StripRegex $v "italics name"}}</em>
+						<em>{{ParseMarkdown $content}}</em>
 					{{else}}
-						<b>{{$v.Author}}:</b> {{$v.Content}}
+						<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
 					{{end}}
+					<br>
 				</span>
 			{{else}}
 				{{if $hiddenToggle}} 
@@ -64,11 +83,19 @@
 					<span class='hidden'>
 				{{end}}
 				<span class='message'>
-					<b>{{$v.Author}}:</b> {{$v.Content}}
+					<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
+					<br>
 				</span>
 			{{end}}
 			{{end}}
 			{{end}}
+			{{if $hiddenToggle}}
+				</span>
+			{{end}}
 		</span>
+		{{else}}
+			<h3>No messages found; invalid area?</h3>
+		{{end}}
+		{{end}}
 	</body>
 </html>

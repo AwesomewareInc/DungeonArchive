@@ -1,0 +1,133 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+		<script src="/resources/search.js" type="text/javascript"></script>
+	</head>
+	<body class='nobg'>
+		{{/*<!-- Arguments from URL -->*/}}
+		{{$file := index .Values 1}}
+		{{$values := index .Query "search"}}
+		{{$valuelen := len $values}}
+
+		{{/*<!-- No results given-->*/}}
+		{{if le $valuelen 0}}
+			<h2>No search results given</h2>
+		{{else}}
+			{{$messages := SearchMessages $file $values}}
+			<h2>Search results for {{PrettyPrintValues $values}}</h2>
+			{{/*<!-- No results message -->*/}}
+			{{$messagelen := len $messages}}
+			{{if le $messagelen 1}}
+				<b>No messages found</b>
+			{{else}}
+			{{/*<!-- Last "last/next" message gotten; for checking them against the current "last/next" message -->*/}}
+			{{$lastNext := index $messages 0}}
+			{{$lastLast := index $messages 0}}
+			{{/*<!-- Last channel gotten; for grouping them. -->*/}}
+			{{$lastChannel := ""}}
+			{{/*<!-- For each message we get... -->*/}}
+			{{range $i, $v := $messages}}
+				{{/*<!-- If it's not in the last channel we got, display a channel indicator. -->*/}}
+				{{if ne $lastChannel $v.Area}}
+				<br>
+				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
+				{{end}}
+				<span class='message'>
+					{{/*<!-- -->*/}}
+
+					{{/*<!-- relevant values -->*/}}
+					{{$author := $v.Author}}
+					{{$content := $v.Content}}
+					{{$next := $v.Next}}
+					{{$last := $v.Last}}
+
+					{{/*<!-- Whether or not to show the next or previous message -->*/}}
+					{{$showLast := true}}
+					{{$showNext := true}}
+
+					{{/*<!-- First, don't show a last/next message if it's empty -->*/}}
+					{{if eq $last.Content ""}}
+						{{$showLast = false}}
+					{{end}}
+					{{if eq $next.Content ""}}
+						{{$showNext = false}}
+					{{end}}
+
+					{{/*<!-- Or if it's the same as the last message we got. -->*/}}
+					{{if eq $last $lastNext}}
+						{{$showLast = false}}
+					{{end}}
+					{{if eq $next $lastLast}}
+						{{$showNext = false}}
+					{{end}}
+
+					{{/*<!-- 
+							and then we take the KISS principle to the extreme because honestly
+							no amount of error checking is gonna make these next two things not
+							needed
+						-->*/}}
+
+					{{/*<!-- Don't show the last message if it was the last in the messages -->*/}}
+					{{$h := Dec $i}}
+					{{if ge $h 0}}
+						{{if eq $last (index $messages $h)}}
+							{{$showLast = false}}
+						{{end}}
+					{{end}}
+
+					{{/*<!-- Don't show the next message if it's the next in the messages -->*/}}
+					{{$j := Inc $i}}
+					{{if gt $messagelen $j}}
+						{{if eq $next (index $messages $j)}}
+							{{$showNext = false}}
+						{{end}}
+					{{end}}
+
+					{{/*<!-- If we're supposed to show the last message -->*/}}
+					{{if $showLast}}
+						{{/*<!-- And we're not at the beginning of the search results-->*/}}
+						{{if ne $i 0}}
+							<span class='message-fadein'>
+								{{$last.Author}}: {{ParseMarkdown (HTMLEscape $last.Content)}}
+							</span>
+						{{end}}
+					{{end}}
+
+					{{/*<!-- The message we got -->*/}}
+					<b>{{$author}}</b>: {{ParseMarkdown (HTMLEscape $content)}}
+
+					{{/*<!-- If we're supposed to show the next message -->*/}}
+					{{if $showNext}}
+						{{/*<!-- If the message following the next message is from the subject, but the next message isn't -->*/}}
+						{{if NameInSearch $next.Next.Author $values}}
+							{{$className := ""}}
+							{{if NameInSearch $next.Author $values}}
+								{{$className = "message"}}
+							{{else}}
+								{{$className = "message semitransparent"}}
+							{{end}}
+							{{/*<!-- todo: find out how to fade it out if it's also the last one-->*/}}
+							</span>
+							<span class='{{$className}}'>
+								<b>{{$next.Author}}</b>: {{ParseMarkdown (HTMLEscape $next.Content)}}
+						{{/*<!-- Otherwise, treat it as the last and fade it out. -->*/}}
+						{{else}}
+						<span class='message-fadeout'>
+							{{$next.Author}}: {{ParseMarkdown (HTMLEscape $next.Content)}}
+						</span>
+						{{end}}
+					{{end}}
+
+					{{/*<!-- TODO: why isn't the very last message ever showing up? -->*/}}
+
+					{{/*<!-- Update the messages/channel to search against -->*/}}
+					{{$lastNext = $next}}
+					{{$lastLast = $last}}
+					{{$lastChannel = $v.Area}}
+					<br>
+				</span>
+			{{end}}
+			{{end}}
+		{{end}}
+	</body>
+</html>
