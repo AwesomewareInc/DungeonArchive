@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,9 +9,6 @@ import (
 	"strings"
 	"text/template" // due to markdown and wanting better code we cannot use html/template lol
 	"time"
-
-	// todo: wait fuck we don't need this
-	"github.com/gabriel-vasile/mimetype"
 )
 
 //go:embed pages/*.*
@@ -73,15 +69,8 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// get the mime-type.
-	contentType, err := mimetype.DetectFile(filename)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
 
 	w.WriteHeader(200)
-	w.Header().Set("Content-Type", contentType.String())
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Header().Set("Content-Name", filename)
 
@@ -113,7 +102,6 @@ func getPagename(fullpagename string) (string, []string) {
 		fullpagename = fullpagename[1:]
 	}
 	values := strings.Split(fullpagename, "/")
-	fmt.Println(values[0])
 
 	// Then try and get the relevant pagename from that, accounting for many specifics.
 	pagename := values[0]
