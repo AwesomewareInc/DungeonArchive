@@ -108,7 +108,7 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 
 func getPagename(fullpagename string) (string, []string) {
 	// Split the pagename into sections
-	if(fullpagename[0] == '/' && len(fullpagename) >= 1) {
+	if(fullpagename[0] == '/' && len(fullpagename) > 1) {
 		fullpagename = fullpagename[1:]
 	}
 	values := strings.Split(fullpagename, "/")
