@@ -12,6 +12,7 @@ import (
 var Config struct {
 	Title       string
 	Description string
+	Password 	string
 }
 
 func init() {

@@ -52,6 +52,17 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Password
+	if(Config.Password != "") {
+		_, pass, ok := r.BasicAuth()
+		if(!ok || pass != Config.Password) {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+	}
+
+
 	// Get the pagename.
 	pagename, values := getPagename(r.URL.EscapedPath())
 
