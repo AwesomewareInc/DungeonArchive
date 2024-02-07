@@ -29,10 +29,10 @@
 			{{range $i, $v := $messages}}
 				{{/*<!-- If it's not in the last channel we got, display a channel indicator. -->*/}}
 				{{if ne $lastChannel $v.Area}}
-				<br>
-				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
+				
+				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a>
 				{{end}}
-				<span class='message'>
+				
 					{{/*<!-- -->*/}}
 
 					{{/*<!-- relevant values -->*/}}
@@ -87,14 +87,14 @@
 					{{if $showLast}}
 						{{/*<!-- And we're not at the beginning of the search results-->*/}}
 						{{if ne $i 0}}
-							<span class='message-fadein'>
+							<span class='message fadein'>
 								{{$last.Author}}: {{ParseMarkdown (HTMLEscape $last.Content)}}
 							</span>
 						{{end}}
 					{{end}}
 
 					{{/*<!-- The message we got -->*/}}
-					<b>{{$author}}</b>: {{ParseMarkdown (HTMLEscape $content)}}
+					<span class='message'><b>{{$author}}</b>: {{ParseMarkdown (HTMLEscape $content)}}</span>
 
 					{{/*<!-- If we're supposed to show the next message -->*/}}
 					{{if $showNext}}
@@ -112,7 +112,7 @@
 								<b>{{$next.Author}}</b>: {{ParseMarkdown (HTMLEscape $next.Content)}}
 						{{/*<!-- Otherwise, treat it as the last and fade it out. -->*/}}
 						{{else}}
-						<span class='message-fadeout'>
+						<span class='message fadeout'>
 							{{$next.Author}}: {{ParseMarkdown (HTMLEscape $next.Content)}}
 						</span>
 						{{end}}
@@ -124,8 +124,7 @@
 					{{$lastNext = $next}}
 					{{$lastLast = $last}}
 					{{$lastChannel = $v.Area}}
-					<br>
-				</span>
+					
 			{{end}}
 			{{end}}
 		{{end}}

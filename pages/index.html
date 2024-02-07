@@ -4,13 +4,11 @@
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		<center>
 			<h1>{{ConfigValue "Title"}}</h1>
 			<p>{{ConfigValue "Description"}}</p>
 			{{range ListCampaigns}}
 			{{$filene := StringNoExtension .RawName}}
 			<a href='/campaign/{{$filene}}'>{{- .Name}}</a><br>
 			{{end}}
-		</center>
 	</body>
 </html>

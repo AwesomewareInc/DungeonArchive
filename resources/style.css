@@ -1,79 +1,220 @@
-@font-face {
-    font-family: Airthan-Age;
-    src: url(fonts/Airthan-Age.ttf);
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+:root {
+  --not-quite-black: #23272a;
+  --blurple: #5865f2;
+  --black: #060a0b;
+  --white: white;
+  --dark-charcoal: #2c2f33;
+  --dark-button-hover: #3b3b3b;
+  --greyple: #99aab5;
+  --spring-green: #57f287;
+  --dim-grey: #50555f;
+  --off-white: #f6f6f6;
+  --dark-blurple: #3442d9;
+  --fuchsia: #eb459e;
+  --yellow: #fee75c;
+  --mint-green: #43b581;
+  --red: #ed4245;
+  --ekko-red: #de2761;
+  --vivid-cerulean: #00b0f4;
+  --orange: #fda220;
+  --pink: #ffcdee;
+  --button-hover: #8891f2;
+  --pinc-2: #dc4195;
+  --green: #52f180;
+  --purple: #808aff;
 }
 
-h1 {
-  font-family: "Airthan-Age";
-  font-size: 5vw;
-  font-weight: 400;
+h1,h2,h3,h4,h5 {
+  margin: 1em;
 }
 
+
+.vbox {
+  display: flex;
+  flex-direction: column;
+  width: 98%;
+}
+
+.hbox {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.hbox.header {
+  width: 98%;
+}
+
+.hbox.header * {
+  vertical-align: middle;
+}
+.hbox.title {
+  flex: 1;
+  padding-left: 1rem;
+}
+.hbox.search {
+  padding: 1rem;
+}
+
+input[type=submit], input[type=button] {
+  background: var(--blurple);
+  color: var(--white);
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input[type=text] {
+  background: var(--dim-grey);
+  color: var(--white);
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  cursor: text;
+}
+.hbox.search input:hover {
+  background: var(--dark-blurple);;
+}
 body {
-  font-family: serif;
-  font-size: 1.5vw;
+  font-family: "Ubuntu";
   overflow-x: hidden;
   width: 100%;
   display: block;
+  color: var(--off-white);
 }
 
-body:not(.nobg) {
-  background-image: url("./bg.png");
+body {
+  background-color: var(--black);
 }
 
-body.nobg {
-  background: #eeeeee;
+a {
+  color: var(--blurple);
+}
+
+a:hover {
+  color: var(--button-hover);
 }
 
 input, option, select {
-  font-size: 1.5vw;
-  padding: 0.5vw;
+  font-size: 1.5rem;
+  padding: 0.5rem;
 }
 
 input[type=submit] {
-  padding: 1vw 5vw;
-  margin-bottom: 1vw;
-}
-
-
-.file-listing {
-  display: block;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
 }
 
 .file-listing .file {
-  width: 15vw;
-  height: 15vw;
-  text-align: center;
-  display: inline-block;
-  margin: 5px 0;
-  overflow: hidden;
+  vertical-align: middle;
 }
+
 .file-listing .file a {
-  color: black;
+  width: 100rem;
+  height: 3rem;
+  text-align: left;
+  padding: 0.1rem;
+  overflow: hidden;
+  vertical-align: middle;
+  color: var(--white);
   text-decoration: none;
   font-family: Verdana, sans-serif;
 }
 
-.file-listing .file a:before {
+.file-listing .file a:before {  
+  vertical-align: middle;
+  display: inline-block;
   content: "";
-  width: 10vw;
-  height: 10vw;
-  display:  block;
+  width: 2rem;
+  height: 2rem;
   background: url("./icons/file.png");
-  margin: 0 auto;
+  margin: 0.4rem 1rem;
   background-size: 100%;
 }
 
-.message {
+.file-listing .file a:hover {
+  background: var(--dim-grey);
+}
+
+.nobg .message {
   display: block;
-  margin: 5px;
+
+}
+
+.message {
+  margin: 1rem;
   position: relative;
 }
 
+.message .avatar {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 1rem;
+  background-size: contain;
+  border-radius: 50%;
+}
+
+
+.message .author {
+  font-weight: bold;
+}
+
+.vbox.rightpart.fake-margin {
+  padding-left: 6.0rem;
+}
+
 .hidden {
-  font-size: 80%;
-  color: #333;
-  font-style: italic;
+  color: transparent;
+  width: 75%;
+  background: var(--dark-charcoal);
+  height: 2rem;
+  margin: 1rem auto;
+  display: block;
+  transition-duration: 1s;
+
+}
+
+.hidden:hover {
+  color: var(--off-white);
+  height: auto;
+  background: transparent;
+  transition-duration: 1s;
+}
+
+
+.hidden:before {
+  content: "Non-tupper messages. Hover to reveal";
+  color: var(--off-white);
+  width: 100%;
+  height: 2rem;
+  line-height: 2rem;
+
+  text-align: center;
+  display: block;
+  transition-duration: 1s;
+  opacity: 1.0;
+  margin-bottom: 0;
+}
+
+.hidden:hover::before {
+
+  opacity: 0.0;
+  height: auto;
+  margin-bottom: -2rem;
+  transition-duration: 1s;
+}
+
+
+.hidden .message {
+  display: block;
+  pointer-events: none;
+}
+
+.hidden:hover .message {
+  pointer-events: all;
 }
 
 .message .loud {
@@ -84,13 +225,10 @@ input[type=submit] {
 
 #skeleton {display: none;}
 #queries input {
-  margin: 0.5vw;
+  margin: 0.5rem;
 }
 #queries input[type=button] {
-  min-width: 3vw;
-}
-#queries .query {
-  display: block;
+  min-width: 3rem;
 }
 #queries *.unselected {
   outline: 2px dotted red;
@@ -101,29 +239,30 @@ input[type=submit] {
   color: white;
   padding: 0 2px;
   border-radius: 3px;
+  margin: 5rem 0;
 }
 
-.message-fadein, .message-fadeout {
-  display: block;
+.message.fadein, .message.fadeout {
   position: relative;
-  margin: 5px 0;
+  margin:  1rem;
   padding: 15px 0 0 0;
   opacity: 0.75;
+  display: block;
 }
 
-.message-fadein:before, .message-fadeout:before {
+.message.fadein:before, .message.fadeout:before {
   content: "";
+  display: block;
   position: absolute;
   width: 100%;
   height: 100%;
-  display: block;
 }
 
-.message-fadein:before {
-  background: linear-gradient(to bottom, #eeeeee, rgba(0,0,0,0));
+.message.fadein::before {
+  background: linear-gradient(to bottom, var(--black), rgba(0,0,0,0));
 }
-.message-fadeout:before {
-  background: linear-gradient(to bottom, rgba(0,0,0,0), #eeeeee);
+.message.fadeout::before {
+  background: linear-gradient(to bottom, rgba(0,0,0,0), var(--black));
 }
 
 .message.semitransparent {

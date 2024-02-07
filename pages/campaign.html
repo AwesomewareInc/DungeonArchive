@@ -9,18 +9,17 @@
 		{{else}}
 		{{$filene := StringNoExtension $file}}
 		{{$pfile := PrettyString $file}}
-		<center>
-			<h2>{{$pfile}}</h2>
-			<form action='/campaign/{{$file}}/search'>
-				<input type='submit' value='Search'>
-			</form>
-		</center>
-		<span class='file-listing'>
-			<span class='file'>
-				<a href='/campaign/{{$file}}/messages/all'>All Messages</a><br>
+		<span class="hbox header">
+			<span class="hbox title"><h1>{{$pfile}}</h1></span>
+			<span class="hbox search">
+				<form action='/campaign/{{$file}}/search'>
+					<input type='submit' value='Search'>
+				</form>
 			</span>
+		</span>
+		<span class='vbox file-listing'>
 			{{range $i, $v := ListAreas $filene}}
-			<span class='file'>
+			<span class='vbox file'>
 				<a href='/campaign/{{$file}}/messages/{{$v}}'>{{PrettyString $v}}</a><br>
 			</span>
 			{{end}}

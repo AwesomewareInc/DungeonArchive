@@ -15,24 +15,25 @@
 		{{else}}
 		{{$pfile := PrettyString $file}}
 		{{$parea := PrettyString $area}}
-		<h6><a href='/campaign/{{$file}}'><- {{$pfile}}</a></h6>
+		<p><a href='/campaign/{{$file}}'><- {{$pfile}}</a></p>
 		<h2>{{$parea}}</h2>
 		{{$messages := ListMessages $filene $area}}
 		{{$messagelen := len $messages}}
 		{{if ge $messagelen 1}}
-		<span class='message-listing'>
+		<span class='vbox message-listing'>
 			{{$hiddenToggle := false}}
 			{{$combinedDate := 0}}
 			
 			{{/*<!-- Last channel gotten; for grouping them. -->*/}}
 			{{$lastChannel := ""}}
 
+			{{/*<!-- last username, for grouping messages together-->*/}}
+			{{$lastUser := ""}}
 			{{range $i, $v := $messages }}
 
 			{{/*<!--  yes there really is a case where a...blank message is just...returned...for some reason... -->*/}}
 			{{if eq $v.Content ""}}
 			{{else}}
-
 			{{/*<!--  get the date and see how far off it is from the last date we got - -->*/}}
 			{{$combinedDate2 := CombinedDate $v.Timestamp}}
 			{{$diff := Sub $combinedDate2 $combinedDate}}
@@ -49,8 +50,9 @@
 						the time isn't accurate since we're account for at least twoi days of no messages --->
 					*/}}
 					{{DateString $v.Timestamp}}
+					{{$lastUser = ""}}
 				</small></center>
-				<hr>
+				
 				{{/*<!--  update the date to what we have now  -->*/}}
 				{{$combinedDate = $combinedDate2}}
 			{{end}}
@@ -74,19 +76,39 @@
 					{{$hiddenToggle = false}}
 				{{end}}
 				{{/*<!--  start the message  -->*/}}
-				<span id='{{$v.ID}}' class='message'>
-					{{$type := GetMessageType $v}}
-					{{if eq $type "action"}}
-						<em>{{$v.Author}} {{ParseMarkdown $content}}</em>
-					{{else if eq $type "loud"}}
-						<b>{{$v.Author}}:</b> <span class='loud'>{{ParseMarkdown $content}}</span>
-					{{else if eq $type "narration"}}
-						<em>{{ParseMarkdown $content}}</em>
+				{{if ne $lastUser $v.Author}}
+				<span id='{{$v.ID}}' class='hbox message'>
+					<div class="avatar" style="background-image: url('/resources/{{$v.Avatar}}')">
+					</div>
+					<span class="vbox rightpart">
 					{{else}}
-						<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
+					<span class="vbox rightpart fake-margin">
 					{{end}}
-					<br>
+					
+					{{if ne $lastUser $v.Author}}
+						<span class="author">
+							{{$v.Author}}
+						</span>
+						<span class="content">
+						{{else}}
+						{{end}}
+							{{$type := GetMessageType $v}}
+							{{if eq $type "loud"}}
+								<span class='loud'>
+							{{end}}
+							{{ParseMarkdown $content}}
+							{{if eq $type "loud"}}
+							</span>
+							{{end}}
+						</span>
+
+						{{if ne $lastUser $v.Author}}
+					</span>
 				</span>
+						{{end}}
+
+						{{$lastUser = $v.Author}}					
+				
 			{{else}}
 				{{if $hiddenToggle}} 
 				{{else}}
@@ -95,7 +117,6 @@
 				{{end}}
 				<span class='message'>
 					<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
-					<br>
 				</span>
 			{{end}}
 			{{end}}
