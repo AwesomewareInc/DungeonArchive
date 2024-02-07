@@ -38,7 +38,7 @@
 			{{$combinedDate2 := CombinedDate $v.Timestamp}}
 			{{$diff := Sub $combinedDate2 $combinedDate}}
 			{{/*<!--  because we want to hide the date if it's two days off.  -->*/}}
-			{{if gt $diff 2}}
+			{{if gt $diff 1}}
 				{{/*<!--  make sure that 'out of character' messages don't have the timestamps; in fact those should end here -->*/}}
 				{{if $hiddenToggle}} 
 					</span>
@@ -113,6 +113,7 @@
 				{{if $hiddenToggle}} 
 				{{else}}
 					{{$hiddenToggle = true}}
+					{{$lastUser = ""}}
 					<span class='hidden'>
 				{{end}}
 				<span class='message'>

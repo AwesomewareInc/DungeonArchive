@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -51,15 +50,14 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Password
-	if(Config.Password != "") {
+	if Config.Password != "" {
 		_, pass, ok := r.BasicAuth()
-		if(!ok || pass != Config.Password) {
+		if !ok || pass != Config.Password {
 			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 	}
-
 
 	// Get the pagename.
 	pagename, values := getPagename(r.URL.EscapedPath())
@@ -95,7 +93,6 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", contentType)
 	w.Header().Set("Content-Name", filename)
 	w.WriteHeader(200)
-	fmt.Println(contentType)
 
 	var Info struct {
 		Values []string
