@@ -231,6 +231,14 @@ input[type=submit] {
   outline: 2px dotted red;
 }
 
+.message-link {
+  color: var(--white);
+  text-decoration: none;
+}
+.message-link:hover {
+  color: var(--greyple);
+  cursor: pointer;
+}
 .channel-name {
   background: #5865F2;
   color: white;
