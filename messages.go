@@ -210,23 +210,6 @@ func ListMessages(value string, area string) []Message {
 		return []Message{}
 	}
 
-	// Area "all" is a keyword for every area in a campaign.
-	// If we're given it...
-	if area == "all" {
-		// First, just get every message in the campaign.
-		var messages []Message
-		for _, a := range Campaigns[value].Areas {
-			for _, m := range a.Messages {
-				messages = append(messages, *m)
-			}
-		}
-		// But then, we want to sort it by the time posted.
-		sort.Slice(messages, func(a, b int) bool {
-			return DateFormatted(messages[a].Timestamp).Before(DateFormatted(messages[b].Timestamp))
-		})
-		return messages
-	}
-
 	if Campaigns[value].Areas[area] == nil {
 		return []Message{}
 	}
@@ -235,7 +218,7 @@ func ListMessages(value string, area string) []Message {
 	// We actually want to create a new array for them
 	// so that we can return them in a reverse order.
 	messagesnew := make([]Message, messagelen)
-	for i := messagelen - 1; i > 0; i-- {
+	for i := messagelen - 1; i >= 0; i-- {
 		messagesnew = append(messagesnew, *messages[i])
 	}
 	return messagesnew

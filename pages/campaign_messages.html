@@ -32,7 +32,7 @@
 			{{range $i, $v := $messages }}
 
 			{{/*<!--  yes there really is a case where a...blank message is just...returned...for some reason... -->*/}}
-			{{if eq $v.Content ""}}
+			{{if eq $v.Author ""}}
 			{{else}}
 			{{/*<!--  get the date and see how far off it is from the last date we got - -->*/}}
 			{{$combinedDate2 := CombinedDate $v.Timestamp}}
