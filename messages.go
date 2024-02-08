@@ -23,13 +23,14 @@ type Author struct {
 }
 
 type Message struct {
-	Avatar    string `json:"avatar"`
-	Author    string `json:"author"`
-	Content   string `json:"content"`
-	Timestamp string `json:"timestamp"`
-	Fictional bool   `json:"fictional"`
-	Area      int    `json:"channel"`
-	ID        int    `json:"id"`
+	Avatar      string   `json:"avatar"`
+	Author      string   `json:"author"`
+	Content     string   `json:"content"`
+	Timestamp   string   `json:"timestamp"`
+	Fictional   bool     `json:"fictional"`
+	Area        int      `json:"channel"`
+	ID          int      `json:"id"`
+	Attachments []string `json:"attachments"`
 
 	PreceededBy *Message
 	FollowedBy  *Message
@@ -141,8 +142,6 @@ func InitCampaigns() {
 			}
 		}
 
-		fmt.Printf("%v\n", newCampaign.Areas)
-
 		registerMessageObject := func(message *Message) {
 			if message == nil {
 				return
@@ -152,7 +151,6 @@ func InitCampaigns() {
 			var area *Area
 			area = newCampaign.Areas[message.Area]
 			if area == nil {
-				fmt.Printf("%v\n", message)
 				return
 			}
 			if area.Messages == nil {
@@ -432,9 +430,7 @@ func GetMessagesFrom(campaign, character string) []*Message {
 
 // Function for above for filtering messages based on a certain criteria
 func FilterMessages(messages []*Message, campaign string, character, action, nextCharacter, nextAction, nextNextCharacter string) []*Message {
-	fmt.Printf("given %v messages\n", len(messages))
 	var filtered []*Message
-	fmt.Printf("section %v::%v\n", character, action)
 
 	switch action {
 	// get messages from A followed by B
@@ -472,7 +468,6 @@ func FilterMessages(messages []*Message, campaign string, character, action, nex
 		filtered = FilterMessages(messages, campaign, character, nextAction, nextNextCharacter, "", "")
 	// get messages from A with a certain keyword.
 	case "mentioning":
-		fmt.Println(nextCharacter)
 		// for each of the messages we got
 		for _, v := range messages {
 			// check if the message has the keyword

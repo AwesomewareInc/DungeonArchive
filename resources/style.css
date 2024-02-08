@@ -273,3 +273,23 @@ input[type=submit] {
 .message.semitransparent {
   opacity: 0.5;
 }
+
+.attachments {
+  display: grid;
+  grid-template-columns: 15vw 15vw 15vw 15vw;
+}
+
+.attachments .img {
+  width: 100%;
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: translate(0%,0%);
+  transition-duration: 1s;
+}
+
+.attachments .img * {
+  width: 100%;
+}

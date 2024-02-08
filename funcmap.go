@@ -54,4 +54,6 @@ var FuncMap = template.FuncMap{
 	"notnil": func(pointer *Message) bool {
 		return (pointer != nil)
 	},
+
+	"GetFileCategory": GetFileCategory,
 }

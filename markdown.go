@@ -20,12 +20,13 @@ func ParseMarkdown(md string) string {
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 	result := string(markdown.Render(doc, renderer))
-	result = strings.Replace(result, "<p>", "", 1)
-	result = strings.Replace(result, "</p>", "", 1)
-	result = strings.Replace(result, "<ul>", "", 1)
-	result = strings.Replace(result, "</ul>", "", 1)
-	result = strings.Replace(result, "<li>", "*", 1)
-	result = strings.Replace(result, "</li>", "", 1)
-	result = strings.Replace(result, "<hr>", " ", 1)
+	result = strings.ReplaceAll(result, "<p>", "")
+	result = strings.ReplaceAll(result, "</p>", "")
+	result = strings.ReplaceAll(result, "<ul>", "")
+	result = strings.ReplaceAll(result, "</ul>", "")
+	result = strings.ReplaceAll(result, "<li>", "*")
+	result = strings.ReplaceAll(result, "</li>", "")
+	result = strings.ReplaceAll(result, "<hr>", " ")
+	result = strings.ReplaceAll(result, "\\n", "<br>")
 	return result
 }

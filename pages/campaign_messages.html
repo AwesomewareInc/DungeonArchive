@@ -100,6 +100,22 @@
 								<span class='loud'>
 							{{end}}
 							{{ParseMarkdown $content}}
+							<span class="attachments">
+							{{range $i, $v := $v.Attachments}}
+								<span class="img">
+									{{$t := GetFileCategory $v}}
+									{{if eq $t "video"}}
+										<video controls src="/resources/{{$v}}"></audio>
+									{{end}}
+									{{if eq $t "audio"}}
+										<audio controls src="/resources/{{$v}}"></audio>
+									{{end}}
+									{{if eq $t "image"}}
+										<img src="/resources/{{$v}}"/>
+									{{end}}
+								</span>
+							{{end}}
+							</span>
 							{{if eq $type "loud"}}
 							</span>
 							{{end}}
@@ -108,10 +124,8 @@
 						{{if ne $lastUser $v.Author}}
 					</span>
 				</span>
-						{{end}}
-
-						{{$lastUser = $v.Author}}					
-				
+				{{end}}
+				{{$lastUser = $v.Author}}					
 			{{else}}
 				{{if $hiddenToggle}} 
 				{{else}}

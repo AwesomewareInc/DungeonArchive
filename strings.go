@@ -110,3 +110,13 @@ func Capitalize(value string) string {
 	}
 	return result
 }
+
+func GetFileCategory(str string) string {
+	if strings.HasSuffix(str, ".webm") || strings.HasSuffix(str, ".mov") || strings.HasSuffix(str, ".mp4") {
+		return "video"
+	}
+	if strings.HasSuffix(str, ".ogg") || strings.HasSuffix(str, ".mp3") || strings.HasSuffix(str, ".wav") {
+		return "audio"
+	}
+	return "image"
+}
