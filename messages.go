@@ -17,11 +17,6 @@ import (
 
 var Regexps map[string]*regexp.Regexp
 
-type Area struct {
-	Name     string
-	Messages []*Message
-}
-
 type Author struct {
 	Name     string
 	Messages []*Message
@@ -32,12 +27,20 @@ type Message struct {
 	Author    string `json:"author"`
 	Content   string `json:"content"`
 	Timestamp string `json:"timestamp"`
-	Fictional string `json:"fictional"`
-	Area      string `json:"channel"`
-	ID        string `json:"id"`
+	Fictional bool   `json:"fictional"`
+	Area      int    `json:"channel"`
+	ID        int    `json:"id"`
 
 	PreceededBy *Message
 	FollowedBy  *Message
+}
+
+type Area struct {
+	ObjectType string `json:"obj_type"`
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	CategoryID string `json:"category_id"`
+	Messages   []*Message
 }
 
 // Template friendly functions for getting PreceededBy and FollowedBy
@@ -98,7 +101,7 @@ func InitCampaigns() {
 		Campaigns[name] = newCampaign
 		newCampaign.Name = name
 
-		newCampaign.Areas = make(map[string]*Area)
+		newCampaign.Areas = make(map[int]*Area)
 		newCampaign.Authors = make(map[string]*Author)
 
 		// Read the file.
@@ -112,27 +115,48 @@ func InitCampaigns() {
 		lines := strings.Split(string(file), "\n")
 		// And unmarshal each line into a new message object.
 		messageObjectFromLine := func(line string) *Message {
-			message := &Message{}
-			json.Unmarshal([]byte(line), message)
-			// Some messages have blank area names, even though the json file doesn't have them?
-			// And then the areas end up having no messages anyways so...?
-			// yeah just ignore them lol
-			if message.Area == "" {
-				return nil
+			raw := make(map[string]string)
+			json.Unmarshal([]byte(line), &raw)
+
+			if val, ok := raw["obj_type"]; ok {
+				switch val {
+				case "message":
+					message := &Message{}
+					json.Unmarshal([]byte(line), &message)
+
+					return message
+				case "channel":
+					channel := &Area{}
+					json.Unmarshal([]byte(line), &channel)
+					newCampaign.Areas[channel.ID] = channel
+					return nil
+				default:
+					return nil
+				}
+			} else {
+				message := &Message{}
+				json.Unmarshal([]byte(line), &message)
+
+				return message
 			}
-			return message
 		}
 
+		fmt.Printf("%v\n", newCampaign.Areas)
+
 		registerMessageObject := func(message *Message) {
+			if message == nil {
+				return
+			}
 			// Check the area tag of the new message to see if
 			// the corresponding area exists, and if not create it.
 			var area *Area
-			if newCampaign.Areas[message.Area] == nil {
-				area = &Area{}
-				area.Name = message.Area
-				newCampaign.Areas[message.Area] = area
-			} else {
-				area = newCampaign.Areas[message.Area]
+			area = newCampaign.Areas[message.Area]
+			if area == nil {
+				fmt.Printf("%v\n", message)
+				return
+			}
+			if area.Messages == nil {
+				area.Messages = make([]*Message, 0)
 			}
 			area.Messages = append(area.Messages, message)
 			// Check the author tag of the new message to see if
@@ -189,22 +213,56 @@ func Sanitize(value string) string {
 	return strings.ToLower(Regexps["sanitization"].ReplaceAllString(value, ""))
 }
 
+type FuckYou struct {
+	Name  string
+	Areas []*Area
+}
+
 // Function for listing the areas in a campaign
-func ListAreas(value string) []string {
-	var areas []string
+func ListAreas(value string) *[]FuckYou {
+	areas := make(map[string][]*Area)
 	if Campaigns[value] == nil {
-		return []string{}
+		return nil
 	}
 	campaign := Campaigns[value].Areas
 	for _, v := range campaign {
-		areas = append(areas, v.Name)
+		id := fmt.Sprintf("%v", v.CategoryID)
+		if areas[id] == nil {
+			areas[id] = make([]*Area, 0)
+		}
+		areas[id] = append(areas[id], v)
 	}
-	sort.Strings(areas)
-	return areas
+	fuck := make([]FuckYou, 0, len(areas))
+
+	keys := make([]string, 0, len(areas))
+
+	for k := range areas {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, _ = range keys {
+		fuck = append(fuck, FuckYou{})
+	}
+	for i, k := range keys {
+		sort.SliceStable(areas[k], func(i, j int) bool {
+			return strings.Compare(areas[k][i].Name, areas[k][j].Name) == -1
+		})
+		fuck[i] = FuckYou{k, areas[k]}
+	}
+
+	return &fuck
+}
+
+func GetArea(value string, area int) *Area {
+	if Campaigns[value] == nil {
+		return &Area{}
+	}
+	return Campaigns[value].Areas[area]
 }
 
 // Function for listing messages in an area.
-func ListMessages(value string, area string) []Message {
+func ListMessages(value string, area int) []Message {
 	if Campaigns[value] == nil {
 		// No messages is an indication of an error and is handled accordingly.
 		return []Message{}
@@ -427,7 +485,7 @@ func FilterMessages(messages []*Message, campaign string, character, action, nex
 	case "in":
 		// for each of the messages we got
 		for _, v := range messages {
-			if Sanitize(v.Area) == nextCharacter {
+			if Sanitize(fmt.Sprintf("%d", v.Area)) == nextCharacter {
 				filtered = append(filtered, v)
 			}
 		}
@@ -463,7 +521,7 @@ func addLastMessageIfFromSame(message *Message, messages []*Message) (newmessage
 // recursive function for walking through a block of narrator messages to see if it eventually leads to another match.
 func addMessageIfFromNarrator(message *Message, messages []*Message, nextCharacter string) (newmessages []*Message, eventual bool) {
 	newmessages = messages
-	if message.Fictional == "False" {
+	if !message.Fictional {
 		newmessages = append(newmessages, message)
 		newmessages, eventual = addMessageIfFromNarrator(message.Next(), newmessages, nextCharacter)
 	} else {

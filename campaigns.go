@@ -14,11 +14,11 @@ type CampaignInfo struct {
 }
 
 type Campaign struct {
-	Name  	string
-	Areas 	map[string]*Area
+	Name    string
+	Areas   map[int]*Area
 	Authors map[string]*Author
-	Valid 	bool
-	Error 	string
+	Valid   bool
+	Error   string
 }
 
 var Campaigns map[string]*Campaign

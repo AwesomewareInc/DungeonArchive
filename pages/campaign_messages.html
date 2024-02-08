@@ -1,23 +1,26 @@
 <html>
 	<head>
+		{{$file := index .Values 1}}
+		{{$filene := StringNoExtension $file}}
+		
 		{{$area := index .Values 3}}
+		{{$an := StrToInt $area}}
+		{{$areaval := GetArea $filene $an}}
 		{{if ne $area ""}}
-		<title>{{PrettyString $area}}</title>
+			
+			<title>{{PrettyString $areaval.Name}}</title>
 		{{end}}
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
 	</head>
 	<body>
-		{{$file := index .Values 1}}
-		{{$filene := StringNoExtension $file}}
-		
 		{{if eq $area ""}}
 			<b>No area specified</b>
 		{{else}}
 		{{$pfile := PrettyString $file}}
-		{{$parea := PrettyString $area}}
+		{{$parea := PrettyString $areaval.Name}}
 		<p><a href='/campaign/{{$file}}'><- {{$pfile}}</a></p>
 		<h2>{{$parea}}</h2>
-		{{$messages := ListMessages $filene $area}}
+		{{$messages := ListMessages $filene $an}}
 		{{$messagelen := len $messages}}
 		{{if ge $messagelen 1}}
 		<span class='vbox message-listing'>
@@ -69,7 +72,7 @@
 			{{end}}
 			{{end}}
 			{{/*<!--  if it's from a fictional character  -->*/}}
-			{{if eq $v.Fictional "True"}}
+			{{if $v.Fictional}}
 				{{/*<!--  end the 'out of character' block if we have to  -->*/}}
 				{{if $hiddenToggle}} 
 					</span>

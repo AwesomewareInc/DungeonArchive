@@ -20,7 +20,10 @@
 		<span class='vbox file-listing'>
 			{{range $i, $v := ListAreas $filene}}
 			<span class='vbox file'>
-				<a href='/campaign/{{$file}}/messages/{{$v}}'>{{PrettyString $v}}</a><br>
+				<h1>{{$v.Name}}</h1>
+				{{range $i_, $v_ := $v.Areas}}
+				<a href='/campaign/{{$file}}/messages/{{$v_.ID}}'>{{PrettyString $v_.Name}}</a><br>
+				{{end}}
 			</span>
 			{{end}}
 		</span>
