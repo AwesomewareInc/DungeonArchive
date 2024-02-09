@@ -64,8 +64,8 @@ window.onload = function() {
 		}
 		if(shouldContinue) {
 			url = window.location.href
-			url = url.replace("/search?","",1)
-			url = url.replace("/search","",1)
+			url = url.replace("/interactionssearch?","",1)
+			url = url.replace("/interactionssearch","",1)
 			window.open(url+"/interactionsresults?search="+text,windowOpenOptions);
 		}
 
