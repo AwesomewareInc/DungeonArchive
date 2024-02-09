@@ -13,7 +13,6 @@ import (
 var HTMLEscapeStrings = strings.NewReplacer(
 	"<", "&lt;",
 	">", "&gt;",
-	"grug", "test",
 )
 
 // Function for getting the similarites between two strings

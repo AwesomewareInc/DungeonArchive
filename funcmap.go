@@ -25,6 +25,7 @@ var FuncMap = template.FuncMap{
 	"SearchMessages":     SearchMessages,
 	"NameInSearch":       NameInSearch,
 	"PrettyPrintValues":  PrettyPrintValues,
+	"GetMessagesWith":    GetMessagesWith,
 
 	"StrToInt": func(st string) int {
 		in, err := strconv.Atoi(st)

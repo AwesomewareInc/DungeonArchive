@@ -32,7 +32,6 @@ h1,h2,h3,h4,h5 {
 .vbox {
   display: flex;
   flex-direction: column;
-  width: 98%;
 }
 
 .hbox {
@@ -78,12 +77,8 @@ input[type=text] {
 body {
   font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   overflow-x: hidden;
-  width: 100%;
   display: block;
   color: var(--off-white);
-}
-
-body {
   background-color: var(--black);
 }
 
@@ -185,7 +180,6 @@ input[type=submit] {
 .hidden:before {
   content: "Non-tupper messages. Hover to reveal";
   color: var(--off-white);
-  width: 100%;
   height: 2rem;
   line-height: 2rem;
 
@@ -197,13 +191,11 @@ input[type=submit] {
 }
 
 .hidden:hover::before {
-
   opacity: 0.0;
   height: auto;
   margin-bottom: -2rem;
   transition-duration: 1s;
 }
-
 
 .hidden .message {
   display: block;
@@ -212,6 +204,11 @@ input[type=submit] {
 
 .hidden:hover .message {
   pointer-events: all;
+}
+
+
+.hidden:not(:hover) * {
+  display: none;
 }
 
 .message .loud {
@@ -239,13 +236,19 @@ input[type=submit] {
   color: var(--greyple);
   cursor: pointer;
 }
-.channel-name {
-  background: #5865F2;
+.user-id, .channel-name {
+  background: var(--blurple);
   color: white;
   padding: 0 2px;
   border-radius: 3px;
   margin: 5rem 0;
 }
+
+.channel-name.archived {
+  background: var(--dim-grey);
+  pointer-events: none;
+}
+
 
 .message.fadein, .message.fadeout {
   position: relative;
@@ -282,7 +285,7 @@ input[type=submit] {
 .attachments .img {
   width: 100%;
   display: inline-block;
-  cursor: pointer;
+  
   position: relative;
   top: 0;
   left: 0;
@@ -293,3 +296,43 @@ input[type=submit] {
 .attachments .img * {
   width: 100%;
 }
+
+time.timestamp {
+  font-weight: normal;
+  font-style: italic;
+  font-size: 80%;
+  color: var(--off-white)
+}
+
+time.timestamp:before {
+  content: " — "
+}
+
+img.emoji {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+}
+
+@media (max-width: 1000px) {
+  html,body {
+    width: 100vw;
+    font-size: 3vw;
+  }
+  .file-listing .file a {
+    height: 8rem;
+  }
+  .file-listing .file a:before {
+    width: 6rem;
+    height: 6rem;
+  }
+  .vbox {
+    width: 100vw;
+  }
+  .vbox.vbox.rightpart.fake-margin {
+    width: 75vw;
+    padding-left: 4.0rem;
+  }
+
+}
+

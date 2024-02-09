@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+		<script src="/resources/search.js" type="text/javascript"></script>
 		<meta charset="UTF-8">
 	</head>
 	<body class='nobg'>
@@ -13,7 +14,7 @@
 		{{if le $valuelen 0}}
 			<h2>No search results given</h2>
 		{{else}}
-			{{$messages := GetMessagesWith $file (index $values 0)}}
+			{{$messages := SearchMessages $file $values}}
 			<h2>Search results for {{PrettyPrintValues $values}}</h2>
 			{{/*<!-- No results message -->*/}}
 			{{$messagelen := len $messages}}
@@ -32,7 +33,9 @@
 				{{$ch := GetArea $file $v.Area}}
 				<a target='a_blank' href='/campaign/{{$file}}/messages/{{$ch.ID}}' class='channel-name'>#{{$ch.Name}}</a>
 				{{end}}
-		
+				
+					{{/*<!-- -->*/}}
+
 					{{/*<!-- relevant values -->*/}}
 					{{$author := $v.Author}}
 					{{$content := $v.Content}}

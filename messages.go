@@ -18,7 +18,8 @@ import (
 var Regexps map[string]*regexp.Regexp
 
 type Author struct {
-	Name     string
+	Name     string `json:"name"`
+	ID       int    `json:"id"`
 	Messages []*Message
 }
 
@@ -37,10 +38,10 @@ type Message struct {
 }
 
 type Area struct {
-	ObjectType string `json:"obj_type"`
 	ID         int    `json:"id"`
 	Name       string `json:"name"`
 	CategoryID string `json:"category_id"`
+	Archived   bool   `json:"archived"`
 	Messages   []*Message
 }
 
@@ -75,6 +76,12 @@ func InitRegexes() {
 	Regexps["sanitization"] = regexp.MustCompile(`[^A-z0-9\-]*`)
 	// experimental, may be removed: regexp for determining if an author was a narrator
 	Regexps["narrator"] = regexp.MustCompile(`^((\?)*)$`)
+
+	Regexps["emote"] = regexp.MustCompile(`&lt;:(.*?):(.*?)&gt;`)
+	Regexps["channel"] = regexp.MustCompile(`&lt;#(.*?)&gt;`)
+	Regexps["user"] = regexp.MustCompile(`&lt;@(!|)(.*?)&gt;`)
+
+	Regexps["message"] = regexp.MustCompile("http(s|)://discord.com/channels/@me/(.*?)/(.*?)")
 }
 
 // initialize the campaigns that we'll be showing.
@@ -104,6 +111,7 @@ func InitCampaigns() {
 
 		newCampaign.Areas = make(map[int]*Area)
 		newCampaign.Authors = make(map[string]*Author)
+		newCampaign.Users = make(map[int]*Author)
 
 		// Read the file.
 		file, err := os.ReadFile(v)
@@ -130,6 +138,11 @@ func InitCampaigns() {
 					channel := &Area{}
 					json.Unmarshal([]byte(line), &channel)
 					newCampaign.Areas[channel.ID] = channel
+					return nil
+				case "user":
+					author := &Author{}
+					json.Unmarshal([]byte(line), &author)
+					newCampaign.Users[author.ID] = author
 					return nil
 				default:
 					return nil
@@ -224,11 +237,13 @@ func ListAreas(value string) *[]FuckYou {
 	}
 	campaign := Campaigns[value].Areas
 	for _, v := range campaign {
-		id := fmt.Sprintf("%v", v.CategoryID)
-		if areas[id] == nil {
-			areas[id] = make([]*Area, 0)
+		if v.Archived {
+			id := fmt.Sprintf("%v", v.CategoryID)
+			if areas[id] == nil {
+				areas[id] = make([]*Area, 0)
+			}
+			areas[id] = append(areas[id], v)
 		}
-		areas[id] = append(areas[id], v)
 	}
 	fuck := make([]FuckYou, 0, len(areas))
 
@@ -239,7 +254,7 @@ func ListAreas(value string) *[]FuckYou {
 	}
 	sort.Strings(keys)
 
-	for _, _ = range keys {
+	for range keys {
 		fuck = append(fuck, FuckYou{})
 	}
 	for i, k := range keys {
@@ -256,7 +271,34 @@ func GetArea(value string, area int) *Area {
 	if Campaigns[value] == nil {
 		return &Area{}
 	}
-	return Campaigns[value].Areas[area]
+	ch := Campaigns[value].Areas[area]
+	if ch == nil {
+		return &Area{
+			ID:         0,
+			Name:       "Unknown Channel",
+			CategoryID: "Unknown Category",
+			Archived:   false,
+			Messages:   []*Message{},
+		}
+	} else {
+		return ch
+	}
+}
+
+func GetUser(value string, user int) *Author {
+	if Campaigns[value] == nil {
+		return &Author{}
+	}
+	u := Campaigns[value].Users[user]
+	if u == nil {
+		return &Author{
+			Name:     "Unknown User",
+			ID:       0,
+			Messages: []*Message{},
+		}
+	} else {
+		return u
+	}
 }
 
 // Function for listing messages in an area.
@@ -412,8 +454,31 @@ func SearchMessages(campaign string, query_ []string) []*Message {
 	return allmessages
 }
 
+// Function for searching all messages with a phrase
+func GetMessagesWith(campaign, phrase string) []*Message {
+	var filtered []*Message
+	for _, a := range Campaigns[campaign].Areas {
+		if a == nil {
+			continue
+		}
+		messages := a.Messages
+		for _, v := range messages {
+			if v == nil {
+				continue
+			}
+			if v.Fictional {
+				if strings.Contains(strings.ToLower(Sanitize(v.Content)), strings.ToLower(Sanitize(phrase))) {
+					filtered = append(filtered, v)
+				}
+			}
+		}
+	}
+	return filtered
+}
+
 // Function for searching the messages from a specific character
 func GetMessagesFrom(campaign, character string) []*Message {
+
 	var filtered []*Message
 	// Get the authors that could possibly match the character
 	matches := MatchNames(campaign, Sanitize(character))
@@ -426,6 +491,7 @@ func GetMessagesFrom(campaign, character string) []*Message {
 		}
 	}
 	return filtered
+
 }
 
 // Function for above for filtering messages based on a certain criteria

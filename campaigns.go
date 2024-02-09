@@ -17,6 +17,7 @@ type Campaign struct {
 	Name    string
 	Areas   map[int]*Area
 	Authors map[string]*Author
+	Users   map[int]*Author
 	Valid   bool
 	Error   string
 }

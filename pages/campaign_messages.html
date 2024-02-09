@@ -11,6 +11,7 @@
 			<title>{{PrettyString $areaval.Name}}</title>
 		{{end}}
 		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+		<meta charset="UTF-8">
 	</head>
 	<body>
 		{{if eq $area ""}}
@@ -71,6 +72,10 @@
 			<a target='a_blank' href='/campaign/{{$file}}/messages/{{$v.Area}}#{{$v.ID}}' class='channel-name'>#{{$v.Area}}</a><br>
 			{{end}}
 			{{end}}
+
+			{{if and (eq (len $v.Attachments) 0) (eq $content "")}}
+				{{$content = "pinned a message"}}
+			{{end}}
 			{{/*<!--  if it's from a fictional character  -->*/}}
 			{{if $v.Fictional}}
 				{{/*<!--  end the 'out of character' block if we have to  -->*/}}
@@ -91,6 +96,9 @@
 					{{if ne $lastUser $v.Author}}
 						<span class="author">
 							{{$v.Author}}
+							<time class="timestamp">
+								{{DateString $v.Timestamp}}
+							</time>
 						</span>
 						<span class="content">
 						{{else}}
@@ -99,7 +107,7 @@
 							{{if eq $type "loud"}}
 								<span class='loud'>
 							{{end}}
-							{{ParseMarkdown $content}}
+							{{ParseMarkdown $file $content}}
 							<span class="attachments">
 							{{range $i, $v := $v.Attachments}}
 								<span class="img">
@@ -134,7 +142,23 @@
 					<span class='hidden'>
 				{{end}}
 				<span class='message'>
-					<b>{{$v.Author}}:</b> {{ParseMarkdown $content}}
+					<b>{{$v.Author}}:</b> {{ParseMarkdown $file  $content}}
+					<span class="attachments">
+						{{range $i, $v := $v.Attachments}}
+							<span class="img">
+								{{$t := GetFileCategory $v}}
+								{{if eq $t "video"}}
+									<video controls src="/resources/{{$v}}"></audio>
+								{{end}}
+								{{if eq $t "audio"}}
+									<audio controls src="/resources/{{$v}}"></audio>
+								{{end}}
+								{{if eq $t "image"}}
+									<img src="/resources/{{$v}}"/>
+								{{end}}
+							</span>
+						{{end}}
+						</span>
 				</span>
 			{{end}}
 			{{end}}

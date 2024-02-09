@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/resources/style.css" type="text/css">
+		<script src="/resources/search.js" type="text/javascript"></script>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<noscript>
+			<h2>this requires javascript.</h2>
+		</noscript>
+		{{$file := index .Values 1}}
+		{{$pfile := PrettyString $file}}
+		<center>
+			<h2>Search through {{$pfile}}</h2>
+		</center>
+		<span id='options_skeleton' style='display: none;'>
+			<select required>
+				<option value=''></option>
+				<option value='and-or'>and/or...</option>
+				<option value='interacting-with'>interacting with...</option>
+				<option value='mentioning'>mentioning...</option>
+				<option value='in'>in...</option>
+			</select>
+		</span>
+		<span id='queries'><input type='button' value='+' id='add-character'><input type='button' value='-' id='remove-character'>  Find...<br>
+			<span id='staple' class='query'><input type='text' required></span>
+			<input type="button" id="submit" value="Search">
+		</span>
+		<br><a href="/campaign/{{$file}}/search">Alternate regular search that lets you search all messages</a> 
+		<br><br><br><br>
+		<h2>Character conjunction key:</h2>
+		<ul>
+			<li>A <em>"and/or"</em> B: get messages from A doing the next action and get messages of B doing the next action (or just existing).</li>
+			<li>A <em>"interacting with"</em> B: get messages from A followed directly by B doing the next action (or just existing).</li>
+			<li>A <em>"mentioning"</em> B: get messages from A with a certain keyword (B).</li>
+			<li><em>"in"</em>: narrow the search results to a specific area (B); for best results, type the exact name of the Discord channel, without the hashtag.</li>
+			</ul>
+			<p>Each prompt addition narrows the search down more unless it's an and/or chain, which is important to note due to the confusing nature of the and/or chain. It's a bit confusing to explain, but essentially, something like "Poopotron and/or Dr. Poopy Fart mentioning Poopburbia" will only return Poopotron mentioning Poopburbia, and I would have to do some major restructuring to the SearchMessages function to fix this. If you only have a chain of and/or though then this will work just fine.</p>
+	</body>
+</html>
