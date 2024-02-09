@@ -66,7 +66,7 @@ window.onload = function() {
 			url = window.location.href
 			url = url.replace("/search?","",1)
 			url = url.replace("/search","",1)
-			window.open(url+"/results?search="+text,windowOpenOptions);
+			window.open(url+"/interactionsresults?search="+text,windowOpenOptions);
 		}
 
 	})

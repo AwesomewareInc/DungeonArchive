@@ -139,7 +139,7 @@ func getPagename(fullpagename string) (string, []string) {
 		if values[2] == "" {
 			return "campaign", values
 		} else {
-			return "campaign_" + strings.Join(values[2:], "_"), values
+			return "campaign_" + values[2], values
 		}
 
 	}
